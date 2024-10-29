@@ -38,7 +38,7 @@ const convertMilesToNautical = (miles) => miles * 0.868976;
 
 // Endpoint to set user location and radius, saved in cookies
 app.post('/api/setLocation', (req, res) => {
-    const { lat, lon, radius } = req.body;
+    const { lat, lon, radius, altitude } = req.body;
     const nauticalRadius = convertMilesToNautical(radius);
     
     const cookieOptions = {
@@ -48,11 +48,11 @@ app.post('/api/setLocation', (req, res) => {
         httpOnly: true
     };
     
-    // Setting cookies for persistence
-    res.cookie('userLocation', JSON.stringify({ lat, lon }), { maxAge: 604800000 }); // 7 days
-    res.cookie('userRadius', nauticalRadius, { maxAge: 604800000 });
+    res.cookie('userLocation', JSON.stringify({ lat, lon }), cookieOptions);
+    res.cookie('userRadius', nauticalRadius, cookieOptions);
+    res.cookie('userAltitude', altitude, cookieOptions);
 
-    res.status(200).json({ message: 'Location and radius saved' });
+    res.status(200).json({ message: 'Location and settings saved' });
 });
 
 app.get('/api/getAircrafts', async (req, res) => {
@@ -61,7 +61,7 @@ app.get('/api/getAircrafts', async (req, res) => {
             return res.status(400).json({ message: 'Location and radius are not set. Please set them first.' });
         }
 
-        const { lat, lon } = JSON.parse(req.cookies.userLocation);
+        const { lat, lon, altitude } = JSON.parse(req.cookies.userLocation);
         const radius = parseFloat(req.cookies.userRadius);
         
         const response = await axios.get(`https://api.airplanes.live/v2/point/${lat}/${lon}/${radius}`);
@@ -71,7 +71,7 @@ app.get('/api/getAircrafts', async (req, res) => {
             altitude: ac.alt_baro || 'N/A',
             distance: ac.dst || 'N/A',
         }));
-        console.log("Lat:", lat, "Lon:", lon, "Radius:", radius, "Count:", aircraftData.length); // Log the values
+        console.log("Lat:", lat, "Lon:", lon, "Radius:", radius, "Altitude:", altitude,"Count:", aircraftData.length); // Log the values
         res.status(200).json(aircraftData);
     } catch (error) {
         console.error("Error fetching data:", error);
