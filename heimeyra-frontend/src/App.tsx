@@ -16,9 +16,10 @@ const App: React.FC = () => {
     const [closestDistance, setClosestDistance] = useState<number>(Infinity);
     const [proxyTestMessage, setProxyTestMessage] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [cookies, setCookie] = useCookies(['userLocation', 'userRadius']);
+    const [cookies, setCookie] = useCookies(['userLocation', 'userRadius', 'userAltitude']);
     const userLocation = cookies.userLocation;
     const userRadius = cookies.userRadius;
+    const userAltitude = cookies.userAltitude;
     const [updateFrequency, setUpdateFrequency] = useState<number>(5);
     const [nearestDistance, setNearestDistance] = useState<number>(Infinity);
     const [updateTrigger, setUpdateTrigger] = useState(Date.now());
@@ -52,32 +53,41 @@ const App: React.FC = () => {
 
     // Fetch aircraft data only if location and radius are set
     const updateAircrafts = async () => {
-        if (!userLocation || !userRadius) {
-            setError("Please set your location and radius.");
-            return;
-        }
+        if (!isPaused) {
+            if (!userLocation || !userRadius) {
+                setError("Please set your location and radius.");
+                return;
+            }
 
-        try {
-            const response = await api.get('/api/getAircrafts');
-            const closest = Math.min(...response.data.map((ac: { distance: number }) => ac.distance));
-            setClosestDistance(closest);
-            setError(null); // Clear any previous error
-        } catch (err) {
-            setError("Failed to update aircraft data.");
-            console.error("Error updating aircraft data:", err);
+            try {
+                const response = await api.get('/api/getAircrafts');
+                const closest = Math.min(...response.data.map((ac: { distance: number }) => ac.distance));
+                setClosestDistance(closest);
+                setError(null); // Clear any previous error
+            } catch (err) {
+                setError("Failed to update aircraft data.");
+                console.error("Error updating aircraft data:", err);
+            }
         }
     };
 
-    // Only start interval if location and radius are set
+    // Only start interval if location and radius are set, and the app is not paused
     useInterval(updateAircrafts, (userLocation && userRadius && !isPaused) ? 1000 : null);
 
     // Add this function before the return statement
-    const handleLocationChange = (newLat: string, newLon: string) => {
-        setLat(newLat);
-        setLon(newLon);
-        // We need to pass radius and altitude from LocationControls
-        // This will require lifting state up or using context
-        // For now, we'll just update the coordinates
+    const handleBoundsChange = (newLat: number, newLon: number) => {
+        console.log('Setting new location:', newLat, newLon);
+
+        //setLat(newLat.toString());
+        //setLon(newLon.toString());
+
+        // Update cookies
+        setCookie('userLocation', {
+            lat: newLat,
+            lon: newLon
+        });
+        setCookie('userRadius', userRadius);
+        setCookie('userAltitude', userAltitude);
     };
 
     // Add state for map center
@@ -112,15 +122,7 @@ const App: React.FC = () => {
                 <LocationMap
                     center={[parseFloat(lat) || 41, parseFloat(lon) || -81]}
                     zoom={zoom}
-                    onLocationChange={handleLocationChange}
-                    onCenterChanged={(newLat, newLon) => {
-                        setCookie('userLocation', { 
-                            lat: newLat, 
-                            lon: newLon 
-                        });
-                        setLat(newLat.toString());
-                        setLon(newLon.toString());
-                    }}
+                    onBoundsChanged={handleBoundsChange}
                 />
             </div>
                 <div className="controls-container">
