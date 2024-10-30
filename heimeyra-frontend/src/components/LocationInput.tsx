@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import api from './axios';
+import api from '../api/api';
 import { useCookies } from 'react-cookie';
 
 const LocationInput: React.FC = () => {

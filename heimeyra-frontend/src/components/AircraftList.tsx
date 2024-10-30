@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
-
-import useInterval from '../hooks/useInterval';
+import api from '../api/api';
 
 interface Aircraft {
     callsign: string;
@@ -11,8 +10,9 @@ interface Aircraft {
 
 interface AircraftListProps {
     onNearestUpdate: (distance: number) => void;
-    frequency: number;  // Add this to the interface
+    frequency: number;
     onUpdateComplete: () => void;
+    isPaused: boolean;
 }
 
 // Add conversion helper at the top of the file
@@ -23,7 +23,8 @@ const nauticalToStatute = (nauticalMiles: number): number => {
 const AircraftList: React.FC<AircraftListProps> = ({ 
     onNearestUpdate,
     frequency,
-    onUpdateComplete
+    onUpdateComplete,
+    isPaused
 }) => {
     const [cookies] = useCookies(['userAltitude']);
     const maxAltitude = cookies.userAltitude || 15000;
@@ -48,18 +49,16 @@ const AircraftList: React.FC<AircraftListProps> = ({
     };
 
     const fetchAircrafts = async () => {
+        if (isPaused) return;
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:5000/api/getAircrafts', {
-                credentials: 'include'
-            });
-            const data = await response.json();
+            const response = await api.get('/api/getAircrafts');
             
-            if (response.ok) {
-                filterAndDisplayAircraft(data);
+            if (response.status === 200) {
+                filterAndDisplayAircraft(response.data);
                 onUpdateComplete(); // Signal completion
             } else {
-                setError(data.message || 'Failed to fetch aircraft data');
+                setError(response.data.message || 'Failed to fetch aircraft data');
             }
         } catch (err) {
             setError('Failed to fetch aircraft data');
@@ -73,7 +72,7 @@ const AircraftList: React.FC<AircraftListProps> = ({
         fetchAircrafts();
         const interval = setInterval(fetchAircrafts, frequency * 1000);
         return () => clearInterval(interval);
-    }, [frequency]); // Add frequency to dependencies
+    }, [frequency]);
 
     return (
         <div className="aircraft-list">

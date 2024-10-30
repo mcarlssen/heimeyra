@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useCookies } from 'react-cookie';
+import api from '../api/api';
 
 interface LocationControlsProps {
     onFrequencyChange: (freq: number) => void;
@@ -20,18 +21,38 @@ const LocationControls: React.FC<LocationControlsProps> = ({
 }) => {
     const [cookies, setCookie] = useCookies(['userLocation', 'userRadius', 'userAltitude']);
 
+    // Default values
+    const DEFAULT_RADIUS = 10;
+    const DEFAULT_ALTITUDE = 15000;
+
     // Access userLocation directly without parsing
     const parsedLocation = cookies.userLocation || null;
 
-    // Initialize state with parsed values
+    // Initialize state with parsed values or defaults
     const [lat, setLat] = useState(parsedLocation?.lat || '');
     const [lon, setLon] = useState(parsedLocation?.lon || '');
     const [radius, setRadius] = useState(
-        cookies.userRadius ? nauticalToStatute(cookies.userRadius) : 10
+        cookies.userRadius ? nauticalToStatute(cookies.userRadius) : DEFAULT_RADIUS
     );
     const [altitude, setAltitude] = useState(
-        cookies.userAltitude || 15000
+        cookies.userAltitude || DEFAULT_ALTITUDE
     );
+
+    // Set default cookies on mount if they don't exist
+    useEffect(() => {
+        if (!cookies.userRadius) {
+            const defaultRadiusNautical = statuteToNautical(DEFAULT_RADIUS);
+            setCookie('userRadius', defaultRadiusNautical, { path: '/' });
+        }
+        if (!cookies.userAltitude) {
+            setCookie('userAltitude', DEFAULT_ALTITUDE, { path: '/' });
+        }
+
+        // If we have location but missing other settings, save them to backend
+        if (parsedLocation && (!cookies.userRadius || !cookies.userAltitude)) {
+            saveSettings(DEFAULT_RADIUS, DEFAULT_ALTITUDE);
+        }
+    }, []);  // Run once on mount
 
     // Update state when cookies change
     useEffect(() => {
@@ -76,23 +97,17 @@ const LocationControls: React.FC<LocationControlsProps> = ({
     const saveSettings = async (newRadius?: number, newAltitude?: number) => {
         try {
             const settingsData = {
+                lat: parsedLocation?.lat,
+                lon: parsedLocation?.lon,
                 radius: statuteToNautical(newRadius || radius),
                 altitude: newAltitude || altitude,
             };
 
-            // Update cookies
+            // Update cookies (but don't update userLocation cookie here)
             setCookie('userRadius', settingsData.radius, { path: '/' });
             setCookie('userAltitude', settingsData.altitude, { path: '/' });
 
-            // Send to backend
-            await fetch('http://localhost:5000/api/setLocation', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify(settingsData),
-            });
+            await api.post('/api/setLocation', settingsData);
             console.log('settingsData:', settingsData);
         } catch (err) {
             console.error('Error saving settings:', err);

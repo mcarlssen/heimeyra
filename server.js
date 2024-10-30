@@ -20,34 +20,20 @@ Step 1: Backend (Node.js) server setup for proximity checking and API handling
 const express = require('express'); 
 const axios = require('axios');
 const cookieParser = require('cookie-parser');
-const app = express();
 const cors = require('cors');
 
+const app = express();
 const PORT = 5000;
 
+// CORS middleware first
 app.use(cors({
     origin: 'http://localhost:3000',
-    credentials: true
+    credentials: true,
 }));
 
+// Then parsers
 app.use(express.json());
 app.use(cookieParser());
-
-// Middleware to parse JSON cookies
-app.use((req, res, next) => {
-    if (req.cookies.userLocation) {
-        if (typeof req.cookies.userLocation === 'string') {
-            try {
-                req.cookies.userLocation = JSON.parse(req.cookies.userLocation);
-            } catch (e) {
-                console.error('Error parsing userLocation cookie:', e);
-                req.cookies.userLocation = null;
-            }
-        }
-        // If it's already an object, no action needed
-    }
-    next();
-});
 
 // Converts statute miles to nautical miles 
 const convertMilesToNautical = (miles) => miles * 0.868976;
@@ -59,9 +45,10 @@ app.post('/api/setLocation', (req, res) => {
     
     const cookieOptions = {
         maxAge: 604800000, // 7 days
-        sameSite: 'strict',
-        secure: process.env.NODE_ENV === 'production',
-        httpOnly: true
+        sameSite: 'Lax',
+        secure: false,
+        httpOnly: false,
+        path: '/',
     };
     
     res.cookie('userLocation', JSON.stringify({ lat, lon }), cookieOptions);
@@ -92,7 +79,7 @@ app.get('/api/getAircrafts', async (req, res) => {
             return res.status(400).json({ message: 'Location and radius are not set. Please set them first.' });
         }
 
-        const { lat, lon } = req.cookies.userLocation;
+        const { lat, lon } = JSON.parse(req.cookies.userLocation);
         const radius = parseFloat(req.cookies.userRadius);
         const altitude = parseFloat(req.cookies.userAltitude);
 

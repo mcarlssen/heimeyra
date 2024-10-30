@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api from './components/axios';
+import api from './api/api';
 import { useCookies } from 'react-cookie';
 import LocationInput from './components/LocationInput';
 import AircraftList from './components/AircraftList';
@@ -16,10 +16,15 @@ const App: React.FC = () => {
     const [closestDistance, setClosestDistance] = useState<number>(Infinity);
     const [proxyTestMessage, setProxyTestMessage] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [cookies, setCookie] = useCookies(['userLocation', 'userRadius', 'userAltitude']);
-    const userLocation = cookies.userLocation;
-    const userRadius = cookies.userRadius;
-    const userAltitude = cookies.userAltitude;
+    const [cookies] = useCookies(['userLocation', 'userRadius', 'userAltitude']);
+    
+    // Default values for render, but don't set cookies
+    const userLocation = cookies.userLocation ?? {
+        lat: 47.6062,  // Seattle's latitude
+        lon: -122.3321 // Seattle's longitude
+    };
+    const userRadius = cookies.userRadius ?? 10;
+    const userAltitude = cookies.userAltitude ?? 15000;
     const [updateFrequency, setUpdateFrequency] = useState<number>(5);
     const [nearestDistance, setNearestDistance] = useState<number>(Infinity);
     const [updateTrigger, setUpdateTrigger] = useState(Date.now());
@@ -30,17 +35,11 @@ const App: React.FC = () => {
         setIsPaused(newPauseState);
         
         try {
-            await fetch('http://localhost:5000/api/setPauseState', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify({ isPaused: newPauseState })
+            await api.post('/api/setPauseState', { 
+                isPaused: newPauseState 
             });
         } catch (err) {
             console.error('Error updating pause state:', err);
-            // Optionally revert the state if the backend update fails
             setIsPaused(!newPauseState);
         }
     };
@@ -48,29 +47,6 @@ const App: React.FC = () => {
     const handleUpdateComplete = () => {
         setUpdateTrigger(Date.now());
     };
-
-    // Fetch aircraft data only if location and radius are set
-    const updateAircrafts = async () => {
-        if (!isPaused) {
-            if (!userLocation || !userRadius) {
-                setError("Please set your location and radius.");
-                return;
-            }
-
-            try {
-                const response = await api.get('/api/getAircrafts');
-                const closest = Math.min(...response.data.map((ac: { distance: number }) => ac.distance));
-                setClosestDistance(closest);
-                setError(null); // Clear any previous error
-            } catch (err) {
-                setError("Failed to update aircraft data.");
-                console.error("Error updating aircraft data:", err);
-            }
-        }
-    };
-
-    // Only start interval if location and radius are set, and the app is not paused
-    useInterval(updateAircrafts, (userLocation && userRadius && userAltitude && !isPaused) ? 1000 : null);
 
     return (
         <div className="app-container">
@@ -93,6 +69,7 @@ const App: React.FC = () => {
                         onNearestUpdate={setNearestDistance}
                         frequency={updateFrequency}
                         onUpdateComplete={handleUpdateComplete}
+                        isPaused={isPaused}
                     />
                 </div>
                 <div className="map-container">

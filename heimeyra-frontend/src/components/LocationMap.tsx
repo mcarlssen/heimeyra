@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Map as PigeonMap } from 'pigeon-maps';
 import { useCookies } from 'react-cookie';
+import api from '../api/api';
 
 interface LocationMapProps {
     center: [number, number];
@@ -18,7 +19,7 @@ const LocationMap: React.FC<LocationMapProps> = ({
     zoom: initialZoom,
     onBoundsChanged
 }) => {
-    const [center, setCenter] = useState<[number, number]>([41, -81]);
+    const [center, setCenter] = useState<[number, number]>([47.6062, -122.3321]);
     const [zoom, setZoom] = useState<number>(8);
     const [cookies, setCookie] = useCookies(['userLocation']);
     const [error, setError] = useState<string | null>(null);
@@ -47,34 +48,17 @@ const LocationMap: React.FC<LocationMapProps> = ({
         }
     }, [cookies.userLocation, lastSetLocation]);
 
-    const updateLocationCookies = async (newLat: number, newLon: number) => {
-        try {
-            console.log('Attempting to set new location:', newLat, newLon);
-            
-            // Update local state
-            setLat(newLat.toString());
-            setLon(newLon.toString());
+    const updateLocationCookies = (newLat: number, newLon: number) => {
+        const locationData = { lat: newLat, lon: newLon };
 
-            // Store the values we're trying to set
-            setLastSetLocation({ lat: newLat, lon: newLon });
-
-            // Prepare cookie data
-            const locationData = { lat: newLat, lon: newLon };
-            
-            // Update cookie
-            setCookie('userLocation', locationData, { 
-                path: '/',
-                sameSite: 'lax',
-                secure: process.env.NODE_ENV === 'production'
-            });
-
-            // Call the parent's onBoundsChanged callback
-            onBoundsChanged(newLat, newLon);
-        } catch (err) {
-            const errorMessage = err instanceof Error ? err.message : 'Unknown error setting location';
-            console.error('Error updating location:', errorMessage);
-            setError(errorMessage);
-        }
+        // Update cookie
+        setCookie('userLocation', locationData, { 
+            path: '/',
+            sameSite: 'Lax',
+            secure: false,
+        });
+        
+        // Optionally, send this info to the backend if needed
     };
 
     return (
