@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useCookies } from 'react-cookie';
-import LocationMap from './LocationMap';
 
 interface LocationControlsProps {
     onFrequencyChange: (freq: number) => void;
     frequency: number;
 }
 
-// Add conversion helper
 const statuteToNautical = (statuteMiles: number): number => {
     return statuteMiles * 0.868976;
 };
@@ -75,24 +73,16 @@ const LocationControls: React.FC<LocationControlsProps> = ({
         };
     };
 
-    const saveSettings = async (
-        newLat?: string,
-        newLon?: string,
-        newRadius?: number,
-        newAltitude?: number
-    ) => {
+    const saveSettings = async (newRadius?: number, newAltitude?: number) => {
         try {
-            const locationData = {
-                lat: newLat || lat,
-                lon: newLon || lon,
+            const settingsData = {
                 radius: statuteToNautical(newRadius || radius),
                 altitude: newAltitude || altitude,
             };
 
             // Update cookies
-            setCookie('userLocation', { lat: locationData.lat, lon: locationData.lon }, { path: '/' });
-            setCookie('userRadius', locationData.radius, { path: '/' });
-            setCookie('userAltitude', locationData.altitude, { path: '/' });
+            setCookie('userRadius', settingsData.radius, { path: '/' });
+            setCookie('userAltitude', settingsData.altitude, { path: '/' });
 
             // Send to backend
             await fetch('http://localhost:5000/api/setLocation', {
@@ -101,16 +91,15 @@ const LocationControls: React.FC<LocationControlsProps> = ({
                     'Content-Type': 'application/json',
                 },
                 credentials: 'include',
-                body: JSON.stringify(locationData),
+                body: JSON.stringify(settingsData),
             });
+            console.log('settingsData:', settingsData);
         } catch (err) {
             console.error('Error saving settings:', err);
         }
     };
 
     const debouncedSave = debounce(saveSettings, 500);
-
-    console.log('cookies.userLocation:', cookies.userLocation);
 
     return (
         <div className="controls-container">
@@ -150,7 +139,7 @@ const LocationControls: React.FC<LocationControlsProps> = ({
                             const newRadius = Number(e.target.value);
                             setRadius(newRadius);
                             updateSliderBackground(e.target, newRadius, 1, 50);
-                            debouncedSave(undefined, undefined, newRadius, undefined);
+                            debouncedSave(newRadius, undefined);
                         }}
                         className="radius-slider"
                     />
@@ -171,7 +160,7 @@ const LocationControls: React.FC<LocationControlsProps> = ({
                             const newAltitude = Number(e.target.value);
                             setAltitude(newAltitude);
                             updateSliderBackground(e.target, newAltitude, 1000, 45000);
-                            debouncedSave(undefined, undefined, undefined, newAltitude);
+                            debouncedSave(undefined, newAltitude);
                         }}
                         className="altitude-slider"
                     />
