@@ -22,15 +22,8 @@ const LocationControls: React.FC<LocationControlsProps> = ({
 }) => {
     const [cookies, setCookie] = useCookies(['userLocation', 'userRadius', 'userAltitude']);
 
-    // Parse userLocation cookie
-    const parsedLocation = (() => {
-        try {
-            return cookies.userLocation ? JSON.parse(cookies.userLocation) : null;
-        } catch (e) {
-            console.error('Error parsing userLocation cookie:', e);
-            return null;
-        }
-    })();
+    // Access userLocation directly without parsing
+    const parsedLocation = cookies.userLocation || null;
 
     // Initialize state with parsed values
     const [lat, setLat] = useState(parsedLocation?.lat || '');
@@ -82,19 +75,24 @@ const LocationControls: React.FC<LocationControlsProps> = ({
         };
     };
 
-    const saveSettings = async (newLat?: string, newLon?: string, newRadius?: number, newAltitude?: number) => {
+    const saveSettings = async (
+        newLat?: string,
+        newLon?: string,
+        newRadius?: number,
+        newAltitude?: number
+    ) => {
         try {
             const locationData = {
-                lat: newLat ? parseFloat(newLat) : parseFloat(lat),
-                lon: newLon ? parseFloat(newLon) : parseFloat(lon),
+                lat: newLat || lat,
+                lon: newLon || lon,
                 radius: statuteToNautical(newRadius || radius),
-                altitude: newAltitude || altitude
+                altitude: newAltitude || altitude,
             };
 
             // Update cookies
-            setCookie('userLocation', JSON.stringify({ lat: locationData.lat, lon: locationData.lon }));
-            setCookie('userRadius', locationData.radius);
-            setCookie('userAltitude', locationData.altitude);
+            setCookie('userLocation', { lat: locationData.lat, lon: locationData.lon }, { path: '/' });
+            setCookie('userRadius', locationData.radius, { path: '/' });
+            setCookie('userAltitude', locationData.altitude, { path: '/' });
 
             // Send to backend
             await fetch('http://localhost:5000/api/setLocation', {
@@ -103,22 +101,16 @@ const LocationControls: React.FC<LocationControlsProps> = ({
                     'Content-Type': 'application/json',
                 },
                 credentials: 'include',
-                body: JSON.stringify(locationData)
+                body: JSON.stringify(locationData),
             });
         } catch (err) {
-            console.error('Error saving location:', err);
+            console.error('Error saving settings:', err);
         }
     };
 
     const debouncedSave = debounce(saveSettings, 500);
-    const [zoom, setZoom] = useState<number>(8);  // Add this if missing
 
-    // Add handler for map center changes
-    const handleMapCenterChange = (newLat: number, newLon: number) => {
-        setLat(newLat.toString());
-        setLon(newLon.toString());
-        debouncedSave(newLat.toString(), newLon.toString());
-    };
+    console.log('cookies.userLocation:', cookies.userLocation);
 
     return (
         <div className="controls-container">
@@ -158,7 +150,7 @@ const LocationControls: React.FC<LocationControlsProps> = ({
                             const newRadius = Number(e.target.value);
                             setRadius(newRadius);
                             updateSliderBackground(e.target, newRadius, 1, 50);
-                            debouncedSave(lat, lon, newRadius, altitude);
+                            debouncedSave(undefined, undefined, newRadius, undefined);
                         }}
                         className="radius-slider"
                     />
@@ -179,7 +171,7 @@ const LocationControls: React.FC<LocationControlsProps> = ({
                             const newAltitude = Number(e.target.value);
                             setAltitude(newAltitude);
                             updateSliderBackground(e.target, newAltitude, 1000, 45000);
-                            debouncedSave(lat, lon, radius, newAltitude);
+                            debouncedSave(undefined, undefined, undefined, newAltitude);
                         }}
                         className="altitude-slider"
                     />

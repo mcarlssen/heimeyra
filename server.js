@@ -33,6 +33,22 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
+// Middleware to parse JSON cookies
+app.use((req, res, next) => {
+    if (req.cookies.userLocation) {
+        if (typeof req.cookies.userLocation === 'string') {
+            try {
+                req.cookies.userLocation = JSON.parse(req.cookies.userLocation);
+            } catch (e) {
+                console.error('Error parsing userLocation cookie:', e);
+                req.cookies.userLocation = null;
+            }
+        }
+        // If it's already an object, no action needed
+    }
+    next();
+});
+
 // Converts statute miles to nautical miles 
 const convertMilesToNautical = (miles) => miles * 0.868976;
 
@@ -70,13 +86,18 @@ app.get('/api/getAircrafts', async (req, res) => {
         return res.status(200).json({ message: 'Updates paused', data: [] });
     }
     try {
+        console.log('Received cookies:', req.cookies);
+
         if (!req.cookies.userLocation || !req.cookies.userRadius) {
             return res.status(400).json({ message: 'Location and radius are not set. Please set them first.' });
         }
 
-        const { lat, lon, altitude } = JSON.parse(req.cookies.userLocation);
+        const { lat, lon } = req.cookies.userLocation;
         const radius = parseFloat(req.cookies.userRadius);
-        
+        const altitude = parseFloat(req.cookies.userAltitude);
+
+        console.log(`Parsed values - Lat: ${lat}, Lon: ${lon}, Radius: ${radius}, Altitude: ${altitude}`);
+
         const response = await axios.get(`https://api.airplanes.live/v2/point/${lat}/${lon}/${radius}`);
         const aircraftData = response.data.ac.map(ac => ({
             total:    ac.total || 'N/A',

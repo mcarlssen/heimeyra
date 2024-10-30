@@ -23,8 +23,6 @@ const App: React.FC = () => {
     const [updateFrequency, setUpdateFrequency] = useState<number>(5);
     const [nearestDistance, setNearestDistance] = useState<number>(Infinity);
     const [updateTrigger, setUpdateTrigger] = useState(Date.now());
-    const [lat, setLat] = useState(cookies.userLocation?.lat || '');
-    const [lon, setLon] = useState(cookies.userLocation?.lon || '');
     const [isPaused, setIsPaused] = useState(false);
 
     const handlePauseToggle = async () => {
@@ -72,27 +70,7 @@ const App: React.FC = () => {
     };
 
     // Only start interval if location and radius are set, and the app is not paused
-    useInterval(updateAircrafts, (userLocation && userRadius && !isPaused) ? 1000 : null);
-
-    // Add this function before the return statement
-    const handleBoundsChange = (newLat: number, newLon: number) => {
-        console.log('Setting new location:', newLat, newLon);
-
-        //setLat(newLat.toString());
-        //setLon(newLon.toString());
-
-        // Update cookies
-        setCookie('userLocation', {
-            lat: newLat,
-            lon: newLon
-        });
-        setCookie('userRadius', userRadius);
-        setCookie('userAltitude', userAltitude);
-    };
-
-    // Add state for map center
-    const [center, setCenter] = useState<[number, number]>([41, -81]);
-    const [zoom, setZoom] = useState<number>(8);  // Add this if missing
+    useInterval(updateAircrafts, (userLocation && userRadius && userAltitude && !isPaused) ? 1000 : null);
 
     return (
         <div className="app-container">
@@ -119,11 +97,7 @@ const App: React.FC = () => {
                 </div>
                 <div className="map-container">
 
-                <LocationMap
-                    center={[parseFloat(lat) || 41, parseFloat(lon) || -81]}
-                    zoom={zoom}
-                    onBoundsChanged={handleBoundsChange}
-                />
+                <LocationMap />
             </div>
                 <div className="controls-container">
                     <LocationControls 
