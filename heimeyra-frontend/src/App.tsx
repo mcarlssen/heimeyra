@@ -16,7 +16,7 @@ const App: React.FC = () => {
     const [closestDistance, setClosestDistance] = useState<number>(Infinity);
     const [proxyTestMessage, setProxyTestMessage] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [cookies] = useCookies(['userLocation', 'userRadius']);
+    const [cookies, setCookie] = useCookies(['userLocation', 'userRadius']);
     const userLocation = cookies.userLocation;
     const userRadius = cookies.userRadius;
     const [updateFrequency, setUpdateFrequency] = useState<number>(5);
@@ -24,6 +24,27 @@ const App: React.FC = () => {
     const [updateTrigger, setUpdateTrigger] = useState(Date.now());
     const [lat, setLat] = useState(cookies.userLocation?.lat || '');
     const [lon, setLon] = useState(cookies.userLocation?.lon || '');
+    const [isPaused, setIsPaused] = useState(false);
+
+    const handlePauseToggle = async () => {
+        const newPauseState = !isPaused;
+        setIsPaused(newPauseState);
+        
+        try {
+            await fetch('http://localhost:5000/api/setPauseState', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({ isPaused: newPauseState })
+            });
+        } catch (err) {
+            console.error('Error updating pause state:', err);
+            // Optionally revert the state if the backend update fails
+            setIsPaused(!newPauseState);
+        }
+    };
 
     const handleUpdateComplete = () => {
         setUpdateTrigger(Date.now());
@@ -48,7 +69,7 @@ const App: React.FC = () => {
     };
 
     // Only start interval if location and radius are set
-    useInterval(updateAircrafts, userLocation && userRadius ? 1000 : null);
+    useInterval(updateAircrafts, (userLocation && userRadius && !isPaused) ? 1000 : null);
 
     // Add this function before the return statement
     const handleLocationChange = (newLat: string, newLon: string) => {
@@ -68,10 +89,12 @@ const App: React.FC = () => {
             <div className="top-banner">
                 <div className="app-title">heimeyra</div>
                 <div className="banner-right">
-                    <LoadingCountdown 
-                        frequency={updateFrequency} 
-                        startTime={updateTrigger}
-                    />
+                <LoadingCountdown 
+                    frequency={updateFrequency} 
+                    startTime={updateTrigger}
+                    isPaused={isPaused}
+                    onPauseToggle={handlePauseToggle}
+                />
                     <WarningIndicators distance={nearestDistance} />
                 </div>
             </div>
@@ -89,12 +112,14 @@ const App: React.FC = () => {
                 <LocationMap
                     center={[parseFloat(lat) || 41, parseFloat(lon) || -81]}
                     zoom={zoom}
-                    containerHeight={275}
-                    containerWidth={515}
                     onLocationChange={handleLocationChange}
-                    onCenterChange={(newLat, newLon) => {
-                        setLat(newLat);
-                        setLon(newLon);
+                    onCenterChanged={(newLat, newLon) => {
+                        setCookie('userLocation', { 
+                            lat: newLat, 
+                            lon: newLon 
+                        });
+                        setLat(newLat.toString());
+                        setLon(newLon.toString());
                     }}
                 />
             </div>

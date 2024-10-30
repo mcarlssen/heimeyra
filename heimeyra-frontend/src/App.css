@@ -73,6 +73,7 @@ body {
     padding: 20px;
     height: calc(690px);  /* 750px - 60px header */
     overflow: hidden;
+    filter: drop-shadow(7px 10px 12px rgba(0, 0, 0, 0.4));
 }
 
 .aircraft-list {
@@ -89,10 +90,13 @@ body {
 .map-container, .controls-container {
     background-color: var(--secondary-bg);
     border-radius: 15px;
-    padding: 20px;
     overflow: hidden;
     height: 100%;  /* Fill their respective grid cells */
     box-sizing: border-box;
+}
+
+.controls-container {
+    padding:10px;
 }
 
 /* Input Styles */
@@ -114,8 +118,15 @@ body {
     height: 20px;
     background: var(--secondary-bg);
     border: 2px solid var(--border-color);
+    border: 1px solid gray;
     border-radius: 12px;
     overflow: hidden;
+    transition: opacity 1s ease;
+    opacity: 0.7;
+}
+
+.loading-countdown:hover {
+    opacity: 1;
 }
 
 .countdown-fill {
@@ -124,18 +135,9 @@ body {
     top: 0;
     height: 100%;
     width: 100%;
-    background-color: var(--accent-color);
-    transform: scaleX(1);
     transform-origin: right;
+    border-radius: 12px;
 }
-/*
-.countdown-text {
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    line-height: 40px;
-    color: var(--text-color);
-} */
 
 .indicator {
     width: 20px;  /* Match height of countdown timer */

@@ -20,7 +20,7 @@ const LocationControls: React.FC<LocationControlsProps> = ({
     onFrequencyChange, 
     frequency 
 }) => {
-    const [cookies] = useCookies(['userLocation', 'userRadius', 'userAltitude']);
+    const [cookies, setCookie] = useCookies(['userLocation', 'userRadius', 'userAltitude']);
 
     // Parse userLocation cookie
     const parsedLocation = (() => {
@@ -83,17 +83,20 @@ const LocationControls: React.FC<LocationControlsProps> = ({
     };
 
     const saveSettings = async (newLat?: string, newLon?: string, newRadius?: number, newAltitude?: number) => {
-        // Don't save if lat/lon are empty
-        if (!newLat || !newLon) return;
-
         try {
             const locationData = {
-                lat: parseFloat(newLat),
-                lon: parseFloat(newLon),
-                radius: statuteToNautical(parseFloat(String(newRadius || radius))),
-                altitude: parseFloat(String(newAltitude || altitude))
+                lat: newLat ? parseFloat(newLat) : parseFloat(lat),
+                lon: newLon ? parseFloat(newLon) : parseFloat(lon),
+                radius: statuteToNautical(newRadius || radius),
+                altitude: newAltitude || altitude
             };
 
+            // Update cookies
+            setCookie('userLocation', JSON.stringify({ lat: locationData.lat, lon: locationData.lon }));
+            setCookie('userRadius', locationData.radius);
+            setCookie('userAltitude', locationData.altitude);
+
+            // Send to backend
             await fetch('http://localhost:5000/api/setLocation', {
                 method: 'POST',
                 headers: {
@@ -110,6 +113,12 @@ const LocationControls: React.FC<LocationControlsProps> = ({
     const debouncedSave = debounce(saveSettings, 500);
     const [zoom, setZoom] = useState<number>(8);  // Add this if missing
 
+    // Add handler for map center changes
+    const handleMapCenterChange = (newLat: number, newLon: number) => {
+        setLat(newLat.toString());
+        setLon(newLon.toString());
+        debouncedSave(newLat.toString(), newLon.toString());
+    };
 
     return (
         <div className="controls-container">
@@ -178,7 +187,7 @@ const LocationControls: React.FC<LocationControlsProps> = ({
             </div>
 
             <div className="update-frequency">
-                <label className="update-frequency-label">Refresh:</label>
+                <label className="update-frequency-label">Refresh</label>
                 <div className="radio-group">
                     {[1, 5, 10].map(freq => (
                         <label key={freq} className="radio-label">

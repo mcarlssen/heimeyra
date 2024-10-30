@@ -55,7 +55,20 @@ app.post('/api/setLocation', (req, res) => {
     res.status(200).json({ message: 'Location and settings saved' });
 });
 
+// Add a variable to track pause state
+let isPaused = false;
+
+// Add a new endpoint to handle pause state
+app.post('/api/setPauseState', (req, res) => {
+    const { isPaused: newPauseState } = req.body;
+    isPaused = newPauseState;
+    res.status(200).json({ message: 'Pause state updated', isPaused });
+});
+
 app.get('/api/getAircrafts', async (req, res) => {
+    if (isPaused) {
+        return res.status(200).json({ message: 'Updates paused', data: [] });
+    }
     try {
         if (!req.cookies.userLocation || !req.cookies.userRadius) {
             return res.status(400).json({ message: 'Location and radius are not set. Please set them first.' });
