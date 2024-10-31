@@ -16,8 +16,11 @@ body {
 
 .app-container {
     display: grid;
-    grid-template-rows: 60px 1fr;
-    height: 100vh;
+    grid-template-rows: 60px 1fr 40px;
+    height: calc(100vh - 100px);
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: var(--primary-bg);
 }
 
 .top-banner {
@@ -56,22 +59,12 @@ body {
     background-color: #808080;
 }
 
-.app-container {
-    display: grid;
-    grid-template-rows: 60px 1fr;
-    height: 750px;  /* Set fixed height */
-    max-width: 1200px;  /* Optional: limit maximum width */
-    margin: 0 auto;  /* Optional: center the app container */
-    background-color: var(--primary-bg);
-}
-
 .main-content {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: 54fr 46fr;
     gap: 20px;
     padding: 20px;
-    height: calc(690px);  /* 750px - 60px header */
     overflow: hidden;
     filter: drop-shadow(7px 10px 12px rgba(0, 0, 0, 0.4));
 }
@@ -192,7 +185,7 @@ body {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
-    margin: 20px 0;
+    margin: 5px 0;
 }
 
 .radius-control, .altitude-control {
@@ -315,4 +308,20 @@ input[type="radio"]:checked {
 
 input[type="radio"]:hover {
     background-color: #c8e6c9;
+}
+
+.footer {
+    padding: 15px 20px;
+    text-align: center;
+    font-size: 0.8em;
+    font-style: italic;
+    color: #333;
+    height: 40px;
+    display: flex;
+    align-items: right;
+    justify-content: right;
+}
+
+.footer p {
+    margin: 0;
 }

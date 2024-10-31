@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useCookies } from 'react-cookie';
 import api from '../api/api';
+import { useDebounce } from '../hooks/useDebounce';
 
 interface LocationControlsProps {
     onFrequencyChange: (freq: number) => void;
@@ -114,7 +115,26 @@ const LocationControls: React.FC<LocationControlsProps> = ({
         }
     };
 
-    const debouncedSave = debounce(saveSettings, 500);
+    // Debounced save function (500ms delay)
+    const debouncedSave = useDebounce(async (newRadius?: number, newAltitude?: number) => {
+        try {
+            const settingsData = {
+                lat: parsedLocation?.lat,
+                lon: parsedLocation?.lon,
+                radius: statuteToNautical(newRadius || radius),
+                altitude: newAltitude || altitude,
+            };
+
+            // Update cookies
+            setCookie('userRadius', settingsData.radius, { path: '/' });
+            setCookie('userAltitude', settingsData.altitude, { path: '/' });
+
+            await api.post('/api/setLocation', settingsData);
+            console.log('settingsData:', settingsData);
+        } catch (err) {
+            console.error('Error saving settings:', err);
+        }
+    }, 750);
 
     return (
         <div className="controls-container">

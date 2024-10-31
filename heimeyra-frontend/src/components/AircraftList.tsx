@@ -46,10 +46,14 @@ const AircraftList: React.FC<AircraftListProps> = ({
                 ? ac.altitude 
                 : parseInt(ac.altitude as string);
 
-           // console.log("Altitude:", altitude);
-
             // Only include if altitude is a valid number and below maxAltitude
             return !isNaN(altitude) && altitude > 0 && altitude <= maxAltitude;
+        })
+        // Add sort by distance
+        .sort((a, b) => {
+            const distA = typeof a.distance === 'number' ? a.distance : Infinity;
+            const distB = typeof b.distance === 'number' ? b.distance : Infinity;
+            return distA - distB;
         });
         
         setAircraftList(filteredData);
@@ -91,7 +95,7 @@ const AircraftList: React.FC<AircraftListProps> = ({
     return (
         <div className="aircraft-list">
             <h2>Nearby Aircraft</h2>
-            {loading && <div className="loading">Loading...</div>}
+            {loading && <div className="loading"></div>}
             {error && <div className="error">{error}</div>}
             {!loading && !error && aircraftList.length === 0 && (
                 <div className="no-data">No aircraft in range</div>

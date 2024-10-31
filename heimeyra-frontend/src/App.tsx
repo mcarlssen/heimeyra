@@ -10,6 +10,7 @@ import LocationControls from './components/LocationControls';
 import LoadingCountdown from './components/LoadingCountdown';
 import WarningIndicators from './components/WarningIndicators';
 import LocationMap from './components/LocationMap'; 
+import Footer from './components/Footer';
 
 
 const App: React.FC = () => {
@@ -82,6 +83,10 @@ const App: React.FC = () => {
                         frequency={updateFrequency}
                     />
                 </div>
+            </div>
+
+            <div className="footer">
+                <Footer />
             </div>
         </div>
     );
