@@ -73,7 +73,7 @@ app.get('/api/getAircrafts', async (req, res) => {
         return res.status(200).json({ message: 'Updates paused', data: [] });
     }
     try {
-        console.log('Received cookies:', req.cookies);
+        //console.log('Received cookies:', req.cookies);
 
         if (!req.cookies.userLocation || !req.cookies.userRadius) {
             return res.status(400).json({ message: 'Location and radius are not set. Please set them first.' });
@@ -83,7 +83,7 @@ app.get('/api/getAircrafts', async (req, res) => {
         const radius = parseFloat(req.cookies.userRadius);
         const altitude = parseFloat(req.cookies.userAltitude);
 
-        console.log(`Parsed values - Lat: ${lat}, Lon: ${lon}, Radius: ${radius}, Altitude: ${altitude}`);
+       // console.log(`Parsed values - Lat: ${lat}, Lon: ${lon}, Radius: ${radius}, Altitude: ${altitude}`);
 
         const response = await axios.get(`https://api.airplanes.live/v2/point/${lat}/${lon}/${radius}`);
         const aircraftData = response.data.ac.map(ac => ({

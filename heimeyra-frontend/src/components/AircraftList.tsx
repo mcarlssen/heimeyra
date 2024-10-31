@@ -4,7 +4,7 @@ import api from '../api/api';
 
 interface Aircraft {
     callsign: string;
-    altitude: number | string;
+    altitude: number | 'ground' | string;
     distance: number | string;
 }
 
@@ -27,15 +27,29 @@ const AircraftList: React.FC<AircraftListProps> = ({
     isPaused
 }) => {
     const [cookies] = useCookies(['userAltitude']);
-    const maxAltitude = cookies.userAltitude || 15000;
+    const [maxAltitude, setMaxAltitude] = useState(cookies.userAltitude || 15000);
     const [aircraftList, setAircraftList] = useState<Aircraft[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
 
+    // Update maxAltitude when cookie changes
+    useEffect(() => {
+        setMaxAltitude(cookies.userAltitude || 15000);
+    }, [cookies.userAltitude]);
+
     const filterAndDisplayAircraft = (data: Aircraft[]) => {
         const filteredData = data.filter(ac => {
-            const altitude = typeof ac.altitude === 'number' ? ac.altitude : 0;
-            return altitude <= maxAltitude;
+            // First check if aircraft is on the ground
+            if (ac.altitude === 'ground') return false;
+            // Convert altitude to number for comparison
+            const altitude = typeof ac.altitude === 'number' 
+                ? ac.altitude 
+                : parseInt(ac.altitude as string);
+
+           // console.log("Altitude:", altitude);
+
+            // Only include if altitude is a valid number and below maxAltitude
+            return !isNaN(altitude) && altitude > 0 && altitude <= maxAltitude;
         });
         
         setAircraftList(filteredData);
@@ -72,7 +86,7 @@ const AircraftList: React.FC<AircraftListProps> = ({
         fetchAircrafts();
         const interval = setInterval(fetchAircrafts, frequency * 1000);
         return () => clearInterval(interval);
-    }, [frequency]);
+    }, [frequency, maxAltitude]);
 
     return (
         <div className="aircraft-list">
