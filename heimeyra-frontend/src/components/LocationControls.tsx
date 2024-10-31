@@ -23,8 +23,8 @@ const LocationControls: React.FC<LocationControlsProps> = ({
     const [cookies, setCookie] = useCookies(['userLocation', 'userRadius', 'userAltitude']);
 
     // Default values
-    const DEFAULT_RADIUS = 10;
-    const DEFAULT_ALTITUDE = 15000;
+    const DEFAULT_RADIUS = 1.5;
+    const DEFAULT_ALTITUDE = 8000;
 
     // Access userLocation directly without parsing
     const parsedLocation = cookies.userLocation || null;
@@ -80,10 +80,10 @@ const LocationControls: React.FC<LocationControlsProps> = ({
         const altitudeSlider = document.querySelector('.altitude-slider') as HTMLInputElement;
         
         if (radiusSlider) {
-            updateSliderBackground(radiusSlider, radius, 1, 50);
+            updateSliderBackground(radiusSlider, radius, 1, 5);
         }
         if (altitudeSlider) {
-            updateSliderBackground(altitudeSlider, altitude, 1000, 45000);
+            updateSliderBackground(altitudeSlider, altitude, 1000, 47000);
         }
     }, []); // Run once on mount
     
@@ -100,7 +100,7 @@ const LocationControls: React.FC<LocationControlsProps> = ({
             const settingsData = {
                 lat: parsedLocation?.lat,
                 lon: parsedLocation?.lon,
-                radius: statuteToNautical(newRadius || radius),
+                radius: newRadius || radius,
                 altitude: newAltitude || altitude,
             };
 
@@ -162,18 +162,19 @@ const LocationControls: React.FC<LocationControlsProps> = ({
             <div className="sliders-container">
                 <div className="radius-control">
                     <div className="slider-label">
-                        <span>Radius</span>
-                        <span className="slider-value">{Math.round(radius)} mi</span>
+                        <span>Audible Radius</span>
+                        <span className="slider-value">{radius.toFixed(1)} mi</span>
                     </div>
                     <input
                         type="range"
                         min="1"
-                        max="50"
+                        max="5"
+                        step="0.1"
                         value={radius}
                         onChange={(e) => {
                             const newRadius = Number(e.target.value);
                             setRadius(newRadius);
-                            updateSliderBackground(e.target, newRadius, 1, 50);
+                            updateSliderBackground(e.target, newRadius, 1, 5);
                             debouncedSave(newRadius, undefined);
                         }}
                         className="radius-slider"

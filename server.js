@@ -41,7 +41,9 @@ const convertMilesToNautical = (miles) => miles * 0.868976;
 // Endpoint to set user location and radius, saved in cookies
 app.post('/api/setLocation', (req, res) => {
     const { lat, lon, radius, altitude } = req.body;
-    const nauticalRadius = convertMilesToNautical(radius);
+    
+    // Calculate the maximum range (3.0x radius) and convert to nautical miles
+    const maxRange = radius * 3.5;  // see WarningIndicators.tsx
     
     const cookieOptions = {
         maxAge: 604800000, // 7 days
@@ -51,8 +53,9 @@ app.post('/api/setLocation', (req, res) => {
         path: '/',
     };
     
+    // Store original statute radius in cookie (not the expanded range)
     res.cookie('userLocation', JSON.stringify({ lat, lon }), cookieOptions);
-    res.cookie('userRadius', nauticalRadius, cookieOptions);
+    res.cookie('userRadius', radius, cookieOptions);  // Store original radius
     res.cookie('userAltitude', altitude, cookieOptions);
 
     res.status(200).json({ message: 'Location and settings saved' });
@@ -73,14 +76,15 @@ app.get('/api/getAircrafts', async (req, res) => {
         return res.status(200).json({ message: 'Updates paused', data: [] });
     }
     try {
-        //console.log('Received cookies:', req.cookies);
+        // Calculate the maximum range (3.0x radius) and convert to nautical miles
+        const maxRange = parseFloat(req.cookies.userRadius) * 3.5;  // see WarningIndicators.tsx
 
         if (!req.cookies.userLocation || !req.cookies.userRadius) {
             return res.status(400).json({ message: 'Location and radius are not set. Please set them first.' });
         }
 
         const { lat, lon } = JSON.parse(req.cookies.userLocation);
-        const radius = parseFloat(req.cookies.userRadius);
+        const radius = maxRange;
         const altitude = parseFloat(req.cookies.userAltitude);
 
        // console.log(`Parsed values - Lat: ${lat}, Lon: ${lon}, Radius: ${radius}, Altitude: ${altitude}`);

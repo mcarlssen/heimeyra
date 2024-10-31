@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from './api/api';
 import { useCookies } from 'react-cookie';
-import LocationInput from './components/LocationInput';
 import AircraftList from './components/AircraftList';
-import AlertIndicator from './components/AlertIndicator';
-import useInterval from './hooks/useInterval';
 import './App.css';
 import LocationControls from './components/LocationControls';
 import LoadingCountdown from './components/LoadingCountdown';
@@ -15,7 +12,6 @@ import Footer from './components/Footer';
 
 const App: React.FC = () => {
     const [closestDistance, setClosestDistance] = useState<number>(Infinity);
-    const [proxyTestMessage, setProxyTestMessage] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [cookies] = useCookies(['userLocation', 'userRadius', 'userAltitude']);
     
@@ -24,8 +20,8 @@ const App: React.FC = () => {
         lat: 47.6062,  // Seattle's latitude
         lon: -122.3321 // Seattle's longitude
     };
-    const userRadius = cookies.userRadius ?? 10;
-    const userAltitude = cookies.userAltitude ?? 15000;
+    const userRadius = cookies.userRadius ?? 1.5;
+    const userAltitude = cookies.userAltitude ?? 8000;
     const [updateFrequency, setUpdateFrequency] = useState<number>(5);
     const [nearestDistance, setNearestDistance] = useState<number>(Infinity);
     const [updateTrigger, setUpdateTrigger] = useState(Date.now());
@@ -52,15 +48,20 @@ const App: React.FC = () => {
     return (
         <div className="app-container">
             <div className="top-banner">
-                <div className="app-title">heimeyra</div>
+                <div className="banner-left">
+                    <div className="app-title">heimeyra</div>
+                    <LoadingCountdown 
+                        frequency={updateFrequency} 
+                        startTime={updateTrigger}
+                        isPaused={isPaused}
+                        onPauseToggle={handlePauseToggle}
+                    />
+                </div>
                 <div className="banner-right">
-                <LoadingCountdown 
-                    frequency={updateFrequency} 
-                    startTime={updateTrigger}
-                    isPaused={isPaused}
-                    onPauseToggle={handlePauseToggle}
-                />
-                    <WarningIndicators distance={nearestDistance} />
+                    <WarningIndicators 
+                        distance={nearestDistance} 
+                        userRadius={userRadius}
+                    />
                 </div>
             </div>
             
@@ -71,6 +72,7 @@ const App: React.FC = () => {
                         frequency={updateFrequency}
                         onUpdateComplete={handleUpdateComplete}
                         isPaused={isPaused}
+                        userRadius={userRadius}
                     />
                 </div>
                 <div className="map-container">

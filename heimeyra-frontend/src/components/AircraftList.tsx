@@ -13,18 +13,16 @@ interface AircraftListProps {
     frequency: number;
     onUpdateComplete: () => void;
     isPaused: boolean;
+    userRadius: number;
 }
 
-// Add conversion helper at the top of the file
-const nauticalToStatute = (nauticalMiles: number): number => {
-    return nauticalMiles * 1.15078;
-};
 
 const AircraftList: React.FC<AircraftListProps> = ({ 
     onNearestUpdate,
     frequency,
     onUpdateComplete,
-    isPaused
+    isPaused,
+    userRadius
 }) => {
     const [cookies] = useCookies(['userAltitude']);
     const [maxAltitude, setMaxAltitude] = useState(cookies.userAltitude || 15000);
@@ -32,24 +30,31 @@ const AircraftList: React.FC<AircraftListProps> = ({
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
 
-    // Update maxAltitude when cookie changes
-    useEffect(() => {
-        setMaxAltitude(cookies.userAltitude || 15000);
-    }, [cookies.userAltitude]);
+    const MAX_DISTANCE_MULTIPLIER = 3.5; // see WarningIndicators.tsx
 
     const filterAndDisplayAircraft = (data: Aircraft[]) => {
         const filteredData = data.filter(ac => {
             // First check if aircraft is on the ground
             if (ac.altitude === 'ground') return false;
+
             // Convert altitude to number for comparison
             const altitude = typeof ac.altitude === 'number' 
                 ? ac.altitude 
                 : parseInt(ac.altitude as string);
 
-            // Only include if altitude is a valid number and below maxAltitude
-            return !isNaN(altitude) && altitude > 0 && altitude <= maxAltitude;
+            // Convert distance from nautical to statute miles
+            const statuteDistance = typeof ac.distance === 'number' 
+                ? ac.distance * 1.15078 
+                : Infinity;
+
+            // Only include if:
+            // 1. Altitude is valid and below maxAltitude
+            // 2. Distance is within our maximum range (3.0x radius)
+            return !isNaN(altitude) && 
+                   altitude > 0 && 
+                   altitude <= maxAltitude &&
+                   statuteDistance <= (userRadius * MAX_DISTANCE_MULTIPLIER);
         })
-        // Add sort by distance
         .sort((a, b) => {
             const distA = typeof a.distance === 'number' ? a.distance : Infinity;
             const distB = typeof b.distance === 'number' ? b.distance : Infinity;
@@ -58,7 +63,7 @@ const AircraftList: React.FC<AircraftListProps> = ({
         
         setAircraftList(filteredData);
         
-        // Update nearest aircraft distance from filtered list
+        // Update nearest aircraft distance
         const distances = filteredData.map(ac => 
             typeof ac.distance === 'number' ? ac.distance : Infinity
         );
@@ -76,10 +81,14 @@ const AircraftList: React.FC<AircraftListProps> = ({
                 filterAndDisplayAircraft(response.data);
                 onUpdateComplete(); // Signal completion
             } else {
-                setError(response.data.message || 'Failed to fetch aircraft data');
+                setError(response.data.message || 'Refresh paused');
             }
         } catch (err) {
-            setError('Failed to fetch aircraft data');
+            if (isPaused) {
+                setError('Refresh paused');
+            } else {
+                setError('Failed to fetch aircraft data');
+            }
             console.error('Error:', err);
         } finally {
             setLoading(false);
@@ -108,7 +117,7 @@ const AircraftList: React.FC<AircraftListProps> = ({
                             <span>Alt: {aircraft.altitude} ft</span>
                             <span>Dist: {
                                 typeof aircraft.distance === 'number' 
-                                    ? nauticalToStatute(aircraft.distance).toFixed(1) 
+                                    ? (aircraft.distance * 1.15078).toFixed(1) 
                                     : aircraft.distance
                             } mi</span>
                         </div>
