@@ -2,19 +2,6 @@
 
 Logging class: 1000
 
-Step 1: Backend (Node.js) server setup for proximity checking and API handling
-
-# The following code outlines the setup of a basic Node.js Express server
-# with two endpoints:
-# - `/api/setLocation`: Receives user location and radius in statute miles and converts to nautical miles
-# - `/api/getAircrafts`: Queries the airplanes.live API based on location and radius, filtering results
-
-# A package.json file should accompany this for dependencies (express, axios, cookie-parser)
-
-# 1. Create a new file named `server.js` and copy this code.
-# 2. Install the necessary packages with:
-#    npm install express axios cookie-parser
-
 */
 
 const express = require('express'); 
@@ -47,7 +34,7 @@ app.post('/api/setLocation', (req, res) => {
     
     const cookieOptions = {
         maxAge: 604800000, // 7 days
-        sameSite: 'Lax',
+        sameSite: 'lax',
         secure: false,
         httpOnly: false,
         path: '/',

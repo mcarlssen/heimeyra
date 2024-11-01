@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface WarningIndicatorsProps {
     distance: number;
@@ -7,6 +7,7 @@ interface WarningIndicatorsProps {
 
 const WarningIndicators: React.FC<WarningIndicatorsProps> = ({ distance, userRadius }) => {
     const [showTooltip, setShowTooltip] = useState(false);
+    const [popupWindow, setPopupWindow] = useState<Window | null>(null);
 
     const getIndicatorStates = () => {
         const statuteDistance = distance * 1.15078;
@@ -28,12 +29,49 @@ const WarningIndicators: React.FC<WarningIndicatorsProps> = ({ distance, userRad
 
     const [indicator1, indicator2] = getIndicatorStates();
 
+    const openPopup = () => {
+        const popup = window.open('warning-popup.html', 'WarningIndicators',
+            'width=180,height=80,resizable=yes,frame=false,titlebar=false,toolbar=false'
+        );
+        
+        if (popup) {
+            setPopupWindow(popup);
+            
+            // Send data to popup
+            popup.addEventListener('load', () => {
+                popup.postMessage({ 
+                    type: 'UPDATE_WARNINGS',
+                    distance,
+                    userRadius
+                }, '*');
+            });
+        }
+    };
+
+    // Update popup when values change
+    useEffect(() => {
+        if (popupWindow) {
+            popupWindow.postMessage({ 
+                type: 'UPDATE_WARNINGS',
+                distance,
+                userRadius
+            }, '*');
+        }
+    }, [distance, userRadius, popupWindow]);
+
     return (
         <div 
             className="warning-indicators"
             onMouseEnter={() => setShowTooltip(true)}
             onMouseLeave={() => setShowTooltip(false)}
         >
+            <button 
+                className="popup-button" 
+                onClick={openPopup}
+                title="Open in separate window"
+            >
+                ⇱
+            </button>
             <div className={`indicator ${indicator1}`} />
             <div className={`indicator ${indicator2}`} />
             {showTooltip && (
@@ -43,6 +81,7 @@ const WarningIndicators: React.FC<WarningIndicatorsProps> = ({ distance, userRad
                     ))}
                 </div>
             )}
+
         </div>
     );
 };

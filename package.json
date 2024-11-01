@@ -16,7 +16,8 @@
     },
     "devDependencies": {
         "@vercel/node": "^3.2.24",
-        "nodemon": "^3.0.1"
+        "nodemon": "^3.0.1",
+        "react-app-rewired": "^2.2.1"
     },
     "author": "",
     "license": "ISC",

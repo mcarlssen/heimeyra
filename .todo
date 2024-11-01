@@ -1,5 +1,5 @@
-Fix radius selector to display a circle radius that can be click-and-dragged
-Add map to display location
+Fix indicator popout
+Add crosshairs to map
 Add ko-fi button
 add footer with links to github and substack
-make sliders more visually appealing
+add footer link to changelog

@@ -6,9 +6,9 @@ import { useCookies } from 'react-cookie';
 import api from '../api/api';
 
 interface LocationMapProps {
-    center: [number, number];
-    zoom: number;
-    onBoundsChanged: (newLat: number, newLon: number) => void;
+    center?: [number, number];
+    zoom?: number;
+    onBoundsChanged?: (bounds: any) => void;
 }
 
 const getProvider = (x: number, y: number, z: number) => 
@@ -19,8 +19,8 @@ const LocationMap: React.FC<LocationMapProps> = ({
     zoom: initialZoom,
     onBoundsChanged
 }) => {
-    const [center, setCenter] = useState<[number, number]>([47.6062, -122.3321]);
-    const [zoom, setZoom] = useState<number>(8);
+    const [mapCenter, setMapCenter] = useState(initialCenter || [47.6062, -122.3321]);
+    const [mapZoom, setMapZoom] = useState(initialZoom || 8);
     const [cookies, setCookie] = useCookies(['userLocation']);
     const [error, setError] = useState<string | null>(null);
     const [lastSetLocation, setLastSetLocation] = useState<{lat: number, lon: number} | null>(null);
@@ -54,7 +54,7 @@ const LocationMap: React.FC<LocationMapProps> = ({
         // Update cookie
         setCookie('userLocation', locationData, { 
             path: '/',
-            sameSite: 'Lax',
+            sameSite: 'lax',
             secure: false,
         });
         
@@ -69,14 +69,15 @@ const LocationMap: React.FC<LocationMapProps> = ({
                 </div>
             )}
             <div style={{ height: '400px', width: '100%' }}>
+                {/* @ts-ignore */}
                 <PigeonMap
-                    center={center}
-                    zoom={zoom}
+                    center={mapCenter}
+                    zoom={mapZoom}
                     provider={getProvider}
                     onBoundsChanged={({ center, zoom }) => { 
                         console.log('Map center changed to:', center);
-                        setCenter(center as [number, number]);
-                        setZoom(zoom);
+                        setMapCenter(center as [number, number]);
+                        setMapZoom(zoom);
                         updateLocationCookies(center[0], center[1]);
                     }}
                 />

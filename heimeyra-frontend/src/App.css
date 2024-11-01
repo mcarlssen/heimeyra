@@ -1,3 +1,11 @@
+@font-face {
+    font-family: 'Skyfont';
+    src: url('../public/skyfont-noncommercial.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    color: #000;
+}
+
 :root {
     --primary-bg: #1a1a1a;
     --secondary-bg: #2a2a2a;
@@ -6,10 +14,20 @@
     --accent-color: #4CAF50;
 }
 
-body {
+/* Add these global styles */
+* {
+    font-family: 'Hind', sans-serif;
     margin: 0;
     padding: 0;
-    font-family: 'Inter', sans-serif;
+    box-sizing: border-box;
+}
+
+.aircraft-item .callsign,
+h2 {
+    text-transform: uppercase;
+}
+
+body {
     background-color: var(--primary-bg);
     color: var(--text-color);
 }
@@ -17,10 +35,11 @@ body {
 .app-container {
     display: grid;
     grid-template-rows: 80px 1fr 40px;
-    height: calc(100vh - 100px);
+    height: 880px;
     max-width: 1200px;
     margin: 0 auto;
     background-color: var(--primary-bg);
+    overflow: hidden;
 }
 
 .top-banner {
@@ -36,8 +55,10 @@ body {
 }
 
 .app-title {
-    font-size: 24px;
-    font-weight: 700;
+    font-family: 'Skyfont', sans-serif;
+    font-size: 48px;
+    color: #000;
+    filter: drop-shadow(2px 3px 12px rgb(255, 255, 255));
 }
 
 .banner-left, .banner-right {
@@ -112,7 +133,7 @@ body {
     position: relative;
     width: 120px;
     height: 20px;
-    background: var(--secondary-bg);
+    background: var(--primary-bg);
     border: 2px solid var(--border-color);
     border: 1px solid gray;
     border-radius: 12px;
@@ -133,14 +154,6 @@ body {
     width: 100%;
     transform-origin: right;
     border-radius: 12px;
-}
-
-.indicator {
-    width: 40px;  /* Match height of countdown timer */
-    height: 40px;
-    border-radius: 50%;
-    transition: background-color 0.3s ease;
-    background-color: #808080;
 }
 
 .warning-indicators {
@@ -177,9 +190,37 @@ body {
     border-bottom: 6px solid var(--border-color);
 }
 
+.indicator {
+    width: 40px;  /* Match height of countdown timer */
+    height: 40px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+    background-color: #808080;
+    border:1px solid var(--secondary-bg);
+}
+
+/* https://cssgradient.io/ */
+
 .indicator.gray { background-color: #808080; }
-.indicator.yellow { background-color: #FFC107; }
-.indicator.red { background-color: #FF5252; }
+.indicator.yellow { 
+    /* background-color: #FFC107; */
+    background: linear-gradient(31deg, rgba(252,202,54,0.9121849423363095) 0%, rgba(255,217,101,1) 33%, rgba(255,227,142,1) 37%, rgba(255,227,142,1) 44%, rgba(255,193,7,1) 49%, rgba(255,171,4,1) 67%, rgba(255,193,78,1) 76%, rgba(255,144,0,1) 100%); 
+    filter:drop-shadow(1px 2px 12px #ffc107);
+
+}
+.indicator.red { 
+    background: linear-gradient(31deg, 
+        rgba(255,82,82,0.9) 0%, 
+        rgba(255,122,122,1) 33%, 
+        rgba(255,150,150,1) 37%, 
+        rgba(255,150,150,1) 44%, 
+        rgba(255,82,82,1) 49%, 
+        rgba(255,60,60,1) 67%, 
+        rgba(255,100,100,1) 76%, 
+        rgba(255,40,40,1) 100%
+    ); 
+    filter: drop-shadow(1px 2px 12px #ff5252);
+}
 
 .aircraft-item {
     display: flex;
@@ -362,4 +403,38 @@ input[type="radio"]:hover {
 
 .footer p {
     margin: 0;
+}
+
+.popup-button {
+    opacity: 0.5;
+    transition: opacity 0.2s;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: inherit;
+    padding: 4px;
+}
+
+.popup-button:hover {
+    opacity: 1;
+}
+
+.changelog-trigger {
+    cursor: pointer;
+    text-decoration: underline;
+    position: relative;
+}
+
+.warning-tooltip.changelog {
+    bottom: calc(100% + 10px);
+    top: auto;
+    right: -20px;
+}
+
+/* Update the arrow for changelog tooltip */
+.warning-tooltip.changelog::before {
+    top: auto;
+    bottom: -6px;
+    border-top: 6px solid var(--border-color);
+    border-bottom: none;
 }

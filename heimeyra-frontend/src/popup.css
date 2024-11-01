@@ -1,0 +1,60 @@
+/* Reset base styles */
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: var(--primary-bg);
+    border-radius: 8px;
+    overflow: hidden;
+    margin:10px;
+}
+
+/* More specific selectors to override App.css */
+#warning-popup-root .warning-popup {
+    position: relative;
+    background-color: var(--secondary-bg);
+    border-radius: 15px;
+    -webkit-app-region: drag;
+    min-width: 100px;
+    min-height: 60px;
+    padding: 10px !important;  /* Force override */
+    box-sizing: border-box;
+    display: flex;         /* Add this */
+    align-items: center;   /* Add this */
+    justify-content: center; /* Add this */
+}
+
+#warning-popup-root .warning-indicators {
+    display: flex;
+    gap: 15px;
+    position: relative;
+    justify-content: center;
+    margin: 0;
+}
+
+.warning-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.6s;
+    padding: 4px;
+    -webkit-app-region: no-drag; /* Allow button clicks */
+}
+
+.warning-popup:hover .warning-popup-header {
+    opacity: 1;
+}
+
+.close-button {
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.close-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
