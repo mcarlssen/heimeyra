@@ -1,5 +1,3 @@
-Fix indicator popout
 Add crosshairs to map
-Add ko-fi button
-add footer with links to github and substack
-add footer link to changelog
+Add footer ko-fi button
+fix footer changelog tooltip
