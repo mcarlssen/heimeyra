@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = function override(config, env) {
     config.entry = {
@@ -13,6 +14,20 @@ module.exports = function override(config, env) {
             path.join(__dirname, 'src/popup.tsx')
         ].filter(Boolean)
     };
+
+    config.resolve.fallback = {
+        ...config.resolve.fallback,
+        "url": require.resolve("url/"),
+        "stream": require.resolve("stream-browserify"),
+        "buffer": require.resolve("buffer/"),
+    };
+
+    config.plugins = [
+        ...config.plugins,
+        new webpack.ProvidePlugin({
+            Buffer: ['buffer', 'Buffer'],
+        }),
+    ];
     
     config.output = {
         ...config.output,

@@ -1,8 +1,66 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useCookies } from 'react-cookie';
 import api from '../api/api';
 import { useDebounce } from '../hooks/useDebounce';
 import LoadingCountdown from './LoadingCountdown';
+import { ToggleButtonGroup, ToggleButton } from '@mui/material';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+
+// Create theme outside of component to prevent recreation on each render
+const theme = createTheme({
+    palette: {
+        mode: 'dark',
+        primary: {
+            main: '#2a2a2a',
+        },
+    },
+    components: {
+        MuiToggleButton: {
+            styleOverrides: {
+                root: {
+                    color: '#ddd',
+                    backgroundColor: '#3a3a3a',
+                    border: '1px solid #3a3a3a',
+                    padding: '7px 0',
+                    minWidth: '50px',
+                    minHeight: '34px',
+                    '& .fa-solid': {  // Target FontAwesome icons
+                        color: '#ddd',  // Default icon color
+                    },
+                    '&.Mui-selected': {
+                        backgroundColor: '#ebb400',
+                        color: '#1a1a1a',
+                        '& .fa-solid': {  // Target FontAwesome icons when selected
+                            color: '#2a2a2a',  // Dark color for better contrast on yellow
+                        },
+                        '&:hover': {
+                            backgroundColor: '#ebb400',
+                        },
+                    },
+                    '&:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    },
+                },
+            },
+        },
+        MuiToggleButtonGroup: {
+            styleOverrides: {
+                root: {
+                    borderRadius: '12px',
+                    gap: '2px',
+                    '& .MuiToggleButton-root:first-of-type': {
+                        borderTopLeftRadius: '12px',
+                        borderBottomLeftRadius: '12px',
+                    },
+                    '& .MuiToggleButton-root:last-of-type': {
+                        borderTopRightRadius: '12px',
+                        borderBottomRightRadius: '12px',
+                    },
+                },
+            },
+        },
+    },
+});
 
 interface LocationControlsProps {
     onFrequencyChange: (freq: number) => void;
@@ -27,6 +85,24 @@ const LocationControls: React.FC<LocationControlsProps> = ({
     isPaused, 
     onPauseToggle 
 }) => {
+    const frequencyValues = ['1s', '5s', '10s'];
+    
+    const getFrequencyNumber = (value: any): number => {
+        if (!value) {
+            console.log('Received undefined value');
+            return frequency; // return current frequency as fallback
+        }
+        
+        try {
+            // Handle both string and object cases
+            const stringValue = typeof value === 'object' ? value.value : value;
+            return parseInt(stringValue.replace('s', ''));
+        } catch (error) {
+            console.error('Error parsing frequency value:', value, error);
+            return frequency; // return current frequency as fallback
+        }
+    };
+
     const [cookies, setCookie] = useCookies(['userLocation', 'userRadius', 'userAltitude']);
 
     // Default values
@@ -143,6 +219,19 @@ const LocationControls: React.FC<LocationControlsProps> = ({
         }
     }, 750);
 
+    const handleFrequencyChange = useCallback(
+        (event: React.MouseEvent<HTMLElement>, newValue: string | null) => {
+            if (newValue !== null) {
+                const freq = parseInt(newValue);
+                if (freq !== frequency) {
+                    console.log('Updating frequency to:', freq);
+                    onFrequencyChange(freq);
+                }
+            }
+        },
+        [frequency, onFrequencyChange]
+    );
+
     return (
         <div className="controls-container">
             <div className="location-inputs">
@@ -221,20 +310,19 @@ const LocationControls: React.FC<LocationControlsProps> = ({
                 </div>
                 <div className="update-frequency">
                     <label className="update-frequency-label">Refresh</label>
-                    <div className="radio-group">
-                        {[1, 5, 10].map(freq => (
-                            <label key={freq} className="radio-label">
-                                <input
-                                    type="radio"
-                                    name="frequency"
-                                    value={freq}
-                                    checked={frequency === freq}
-                                    onChange={() => onFrequencyChange(freq)}
-                                />
-                                {freq}s
-                            </label>
-                        ))}
-                    </div>
+                    <ThemeProvider theme={theme}>
+                        <ToggleButtonGroup
+                            value={frequency.toString()}
+                            exclusive
+                            onChange={handleFrequencyChange}
+                            aria-label="refresh frequency"
+                            size="small"
+                        >
+                            <ToggleButton value="1"><i className="fa-solid fa-1"></i></ToggleButton>
+                            <ToggleButton value="5"><i className="fa-solid fa-5"></i></ToggleButton>
+                            <ToggleButton value="10"><i className="fa-solid fa-1"></i><i className="fa-solid fa-0"></i></ToggleButton>
+                        </ToggleButtonGroup>
+                    </ThemeProvider>
                 </div>
             </div>
         </div>

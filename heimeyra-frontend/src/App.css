@@ -352,52 +352,14 @@ body {
 
 .update-frequency {
     display: flex;
-    gap: 10px;
     flex-direction: column;
-    align-items: center;
+    gap: 10px;
+    align-items: flex-start;
 }
 
 .update-frequency-label{
     font-size: 0.9em;
     color: #888;
-}
-
-.radio-group {
-    display: flex;
-    gap: 10px;
-}
-
-.radio-label {
-    font-size: 0.9em;
-    color: #888;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.radio-group label {
-    margin-right: 15px;
-}
-
-input[type="radio"] {
-    appearance: none;
-    width: 22px;
-    height: 22px;
-    background-color: #e0e0e0;
-    border-radius: 50%;
-    position: relative;
-    cursor: pointer;
-    outline: none;
-    border: 2px solid var(--text-accent-color);
-    transition: background-color 0.2s ease;
-}
-
-input[type="radio"]:checked {
-    background-color: var(--text-accent-color);
-}
-
-input[type="radio"]:hover {
-    background-color: #c8e6c9;
 }
 
 .footer {
@@ -525,7 +487,7 @@ input[type="radio"]:hover {
     grid-template-columns: 1fr 1fr;
     gap: 20px;
     align-items: center;
-    margin-top: 20px;
+    margin-top: 5px;
 }
 
 .countdown-container {
@@ -539,9 +501,4 @@ input[type="radio"]:hover {
     flex-direction: column;
     gap: 10px;
     align-items: flex-start;
-}
-
-.radio-group {
-    display: flex;
-    gap: 15px;
 }
