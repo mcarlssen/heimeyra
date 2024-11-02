@@ -4,7 +4,6 @@
         {
             "src": "heimeyra-frontend/package.json",
             "use": "@vercel/static-build",
-            "config": { "distDir": "heimeyra-frontend/build" }
         },
         {
             "src": "server.js",
