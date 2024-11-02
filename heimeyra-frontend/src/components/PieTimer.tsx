@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 
 interface PieTimerProps {
     duration: number;
@@ -49,7 +49,7 @@ const PieTimer: React.FC<PieTimerProps> = ({
         };
     };
 
-    const animate = (timestamp: number) => {
+    const animate = useCallback((timestamp: number) => {
         if (!startTimeRef.current) {
             startTimeRef.current = timestamp;
         }
@@ -65,7 +65,7 @@ const PieTimer: React.FC<PieTimerProps> = ({
             startTimeRef.current = timestamp;
             requestRef.current = requestAnimationFrame(animate);
         }
-    };
+    }, [duration]);
 
     useEffect(() => {
         if (!isPaused) {
@@ -80,7 +80,7 @@ const PieTimer: React.FC<PieTimerProps> = ({
                 cancelAnimationFrame(requestRef.current);
             }
         };
-    }, [duration, isPaused]);
+    }, [duration, isPaused, animate]);
 
     return (
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>

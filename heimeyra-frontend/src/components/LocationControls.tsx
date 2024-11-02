@@ -85,7 +85,6 @@ const LocationControls: React.FC<LocationControlsProps> = ({
     onPauseToggle 
 }) => {
     const [cookies, setCookie] = useCookies(['userLocation', 'userRadius', 'userAltitude']);
-    const maxAltitude = cookies.userAltitude || 15000;  // Remove useState, just use const
 
     // Default values
     const DEFAULT_RADIUS = 1.5;

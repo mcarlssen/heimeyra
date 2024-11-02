@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import api from '../api/api';
 
@@ -11,7 +11,6 @@ interface Aircraft {
 interface AircraftListProps {
     onNearestUpdate: (distance: number) => void;
     frequency: number;
-    onUpdateComplete: () => void;
     isPaused: boolean;
     userRadius: number;
 }
@@ -19,7 +18,6 @@ interface AircraftListProps {
 const AircraftList: React.FC<AircraftListProps> = ({ 
     onNearestUpdate,
     frequency,
-    onUpdateComplete,
     isPaused,
     userRadius
 }) => {
@@ -80,7 +78,6 @@ const AircraftList: React.FC<AircraftListProps> = ({
                     console.log('🛩️ heimeyra data updated:', response.data.stats);
                 }
                 filterAndDisplayAircraft(response.data.data);
-                onUpdateComplete();
             } else {
                 setError(response.data.message || 'Refresh paused');
             }

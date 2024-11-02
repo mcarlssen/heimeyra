@@ -11,7 +11,6 @@ import Modal from './components/Modal';  // Your existing Modal component
 import { AboutContent, HelpContent } from './components/ModalContent';
 
 const App: React.FC = () => {
-    const [updateTrigger, setUpdateTrigger] = useState<number>(Date.now());
     const [cookies] = useCookies(['userLocation', 'userRadius', 'userAltitude']);
     const userRadius = cookies.userRadius ?? 1.5;
     const [updateFrequency, setUpdateFrequency] = useState<number>(5);
@@ -32,10 +31,6 @@ const App: React.FC = () => {
             console.error('Error updating pause state:', err);
             setIsPaused(!newPauseState);
         }
-    };
-
-    const handleUpdateComplete = () => {
-        setUpdateTrigger(Date.now());
     };
 
     return (
@@ -71,20 +66,17 @@ const App: React.FC = () => {
                     <AircraftList 
                         onNearestUpdate={setNearestDistance}
                         frequency={updateFrequency}
-                        onUpdateComplete={handleUpdateComplete}
                         isPaused={isPaused}
                         userRadius={userRadius}
                     />
                 </div>
                 <div className="map-container">
-
-                <LocationMap />
-            </div>
+                    <LocationMap />
+                </div>
                 <div className="controls-container">
                     <LocationControls 
                         onFrequencyChange={setUpdateFrequency}
                         frequency={updateFrequency}
-                        onCountdownComplete={handleUpdateComplete}
                         isPaused={isPaused}
                         onPauseToggle={handlePauseToggle}
                     />
