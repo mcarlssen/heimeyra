@@ -124,7 +124,7 @@ const LocationControls: React.FC<LocationControlsProps> = ({
         }
     }, [parsedLocation, radius, altitude, setCookie]);
 
-    // Set default cookies on mount if they don't exist
+// eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         if (!cookies.userRadius) {
             const defaultRadiusNautical = statuteToNautical(DEFAULT_RADIUS);
@@ -140,7 +140,7 @@ const LocationControls: React.FC<LocationControlsProps> = ({
         }
     }, [cookies.userRadius, cookies.userAltitude, parsedLocation, saveSettings]);  // Run once on mount
 
-    // Update state when cookies change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         if (parsedLocation) {
             setLat(parsedLocation.lat);
