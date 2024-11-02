@@ -286,13 +286,12 @@ body {
 
 .radius-slider, .altitude-slider {
     width: 100%;
-    height: 4px;
     background: var(--border-color);
     border-radius: 18px;
     -webkit-appearance: none;
     appearance: none;
     height: 28px;  /* Thicker track */
-    margin-bottom: 30px;
+    margin-bottom: 10px;
     border:1px solid rgb(70, 70, 70);
 }
 
@@ -484,21 +483,53 @@ body {
 
 .controls-bottom {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: auto auto;
     gap: 20px;
     align-items: center;
+    justify-content: center;
     margin-top: 5px;
 }
 
-.countdown-container {
+.controls-row {
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 10px;
 }
 
-.update-frequency {
+.timer-container {
+    display: flex;
+    align-items: center;
+}
+
+.pause-control {
+    width: 255px;
+    padding: 8px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.pause-label {
+    font-size: 0.9em;
+    color: #888;
+    text-align: center;
+}
+
+/* SVG Pie Timer colors */
+.svg-loader {
+    fill: #ebb400;
+}
+
+.svg-border {
+    fill: #3a3a3a;
+}
+
+.update-controls {
+    width: 255px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }

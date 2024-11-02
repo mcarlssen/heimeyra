@@ -4,6 +4,7 @@ import api from '../api/api';
 import { useDebounce } from '../hooks/useDebounce';
 import LoadingCountdown from './LoadingCountdown';
 import { ToggleButtonGroup, ToggleButton } from '@mui/material';
+import PieTimer from './PieTimer';  // Add this import
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 // Create theme outside of component to prevent recreation on each render
@@ -300,28 +301,59 @@ const LocationControls: React.FC<LocationControlsProps> = ({
             </div>
 
             <div className="controls-bottom">
-                <div className="countdown-container">
-                    <LoadingCountdown
-                        frequency={frequency}
-                        onComplete={onCountdownComplete}
-                        isPaused={isPaused}
-                        onPauseToggle={onPauseToggle}
-                    />
-                </div>
-                <div className="update-frequency">
+                <div className="update-controls">
                     <label className="update-frequency-label">Refresh</label>
+                    <div className="controls-row">
+                        <ThemeProvider theme={theme}>
+                            <ToggleButtonGroup
+                                value={frequency.toString()}
+                                exclusive
+                                onChange={handleFrequencyChange}
+                                aria-label="refresh frequency"
+                                size="small"
+                            >
+                                <ToggleButton value="1">
+                                    <i className="fa-solid fa-1"></i>
+                                </ToggleButton>
+                                <ToggleButton value="5">
+                                    <i className="fa-solid fa-5"></i>
+                                </ToggleButton>
+                                <ToggleButton value="10">
+                                    <i className="fa-solid fa-1"></i>
+                                    <i className="fa-solid fa-0"></i>
+                                </ToggleButton>
+                            </ToggleButtonGroup>
+                            
+                            <div className="timer-container">
+                                <PieTimer
+                                    duration={frequency * 1000}
+                                    size={30}
+                                    color="#ebb400"
+                                    backgroundColor="#3a3a3a"
+                                    isPaused={isPaused}
+                                />
+                            </div>
+                        </ThemeProvider>
+                    </div>
+                </div>
+                
+                <div className="pause-control">
+                    <label className="pause-label">Pause</label>
                     <ThemeProvider theme={theme}>
-                        <ToggleButtonGroup
-                            value={frequency.toString()}
-                            exclusive
-                            onChange={handleFrequencyChange}
-                            aria-label="refresh frequency"
+                        <ToggleButton
+                            value="pause"
+                            selected={isPaused}
+                            onChange={() => onPauseToggle()}
                             size="small"
+                            style={{
+                                borderRadius: '12px',
+                                padding: '7px 12px',
+                                minWidth: '50px',
+                                minHeight: '50px'
+                            }}
                         >
-                            <ToggleButton value="1"><i className="fa-solid fa-1"></i></ToggleButton>
-                            <ToggleButton value="5"><i className="fa-solid fa-5"></i></ToggleButton>
-                            <ToggleButton value="10"><i className="fa-solid fa-1"></i><i className="fa-solid fa-0"></i></ToggleButton>
-                        </ToggleButtonGroup>
+                            <i className="fa-solid fa-circle-pause" style={{ fontSize: '36px' }}  />
+                        </ToggleButton>
                     </ThemeProvider>
                 </div>
             </div>
