@@ -7,7 +7,7 @@ import LocationControls from './components/LocationControls';
 import WarningIndicators from './components/WarningIndicators';
 import LocationMap from './components/LocationMap'; 
 import Footer from './components/Footer';
-
+import Modal from './components/Modal';  // Your existing Modal component
 
 const App: React.FC = () => {
     const [closestDistance, setClosestDistance] = useState<number>(Infinity);
@@ -25,6 +25,26 @@ const App: React.FC = () => {
     const [nearestDistance, setNearestDistance] = useState<number>(Infinity);
     const [updateTrigger, setUpdateTrigger] = useState(Date.now());
     const [isPaused, setIsPaused] = useState(false);
+    const [aboutOpen, setAboutOpen] = useState(false);
+    const [helpOpen, setHelpOpen] = useState(false);
+
+    const aboutContent = (
+        <>
+            <h2>About Heimeyra</h2>
+            <p>Heimeyra is a real-time aircraft tracking visualization tool.</p>
+            <p>Version 1.0.0</p>
+        </>
+    );
+
+    const helpContent = (
+        <>
+            <h2>Help</h2>
+            <h3>Getting Started</h3>
+            <p>1. Set your location using the latitude and longitude fields</p>
+            <p>2. Adjust the radius to define your search area</p>
+            <p>3. Set your preferred refresh rate</p>
+        </>
+    );
 
     const handlePauseToggle = async () => {
         const newPauseState = !isPaused;
@@ -49,6 +69,20 @@ const App: React.FC = () => {
             <div className="top-banner">
                 <div className="banner-left">
                     <div className="app-title"><i className="fa-solid fa-plane-circle-exclamation"></i> heimeyra</div>
+                    <div className="header-links">
+                    <h2 
+                        className="header-link" 
+                        onClick={() => setAboutOpen(true)}
+                    >
+                        About
+                    </h2>
+                    <h2 
+                        className="header-link" 
+                        onClick={() => setHelpOpen(true)}
+                    >
+                        Help
+                        </h2>
+                    </div>
                 </div>
                 <div className="banner-right">
                     <WarningIndicators 
@@ -83,6 +117,21 @@ const App: React.FC = () => {
                 </div>
             </div>
             <Footer />
+            <Modal 
+                isOpen={aboutOpen}
+                onClose={() => setAboutOpen(false)}
+                title="About"
+            >
+                {aboutContent}
+            </Modal>
+
+            <Modal 
+                isOpen={helpOpen}
+                onClose={() => setHelpOpen(false)}
+                title="Help"
+            >
+                {helpContent}
+            </Modal>
         </div>
     );
 };
