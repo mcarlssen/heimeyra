@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Focused Fresnel Lens Effect</title>
+<style>
+  :root {
+    --lens-color: #ffc107; /* Default color: optimized yellow */
+  }
+
+  .fresnel-lens {
+    width: 200px;
+    height: 200px;
+  }
+
+  /* Expanded core glow for larger, focused light source */
+  .lens-core {
+    fill: url(#core-glow-gradient);
+  }
+
+  /* Soft outer ring for a more evenly illuminated look */
+  .lens-ring {
+    fill: url(#outer-ring-gradient);
+    opacity: 0.8;
+  }
+
+  /* Defined inner overlays for Fresnel structure, with softened falloff */
+  .lens-overlay {
+    fill: var(--lens-color);
+    opacity: 0.2;
+  }
+
+  /* Darkened overlays with smoother transitions */
+  .lens-overlay-dark {
+    fill: url(#dark-gradient);
+    opacity: 0.5;
+  }
+
+  /* Outer halo effect for an even spread of light */
+  .outer-halo {
+    fill: var(--lens-color);
+    opacity: 0.35;
+    filter: blur(10px);
+  }
+
+  /* Bright central light source for strong, focused illumination */
+  .center-light {
+    fill: white;
+    opacity: 0.9;
+    filter: blur(4px);
+  }
+</style>
+</head>
+<body>
+
+<svg class="fresnel-lens" viewBox="0 0 100 100">
+  <!-- Core Glow Gradient for a Larger, Focused Light Source -->
+  <defs>
+    <radialGradient id="core-glow-gradient" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" style="stop-color: white; stop-opacity: 1" />
+      <stop offset="35%" style="stop-color: var(--lens-color); stop-opacity: 1" />
+      <stop offset="85%" style="stop-color: black; stop-opacity: 0.7" />
+    </radialGradient>
+
+    <!-- Outer Ring Gradient with Softer Falloff for Even Illumination -->
+    <radialGradient id="outer-ring-gradient" cx="50%" cy="50%" r="100%">
+      <stop offset="0%" style="stop-color: var(--lens-color); stop-opacity: 0.3" />
+      <stop offset="75%" style="stop-color: black; stop-opacity: 0.8" />
+      <stop offset="100%" style="stop-color: black; stop-opacity: 0.9" />
+    </radialGradient>
+
+    <!-- Dark Gradient for Outer Layers with Softer Transitions -->
+    <radialGradient id="dark-gradient" cx="50%" cy="50%" r="100%">
+      <stop offset="0%" style="stop-color: rgba(0, 0, 0, 0); stop-opacity: 0" />
+      <stop offset="50%" style="stop-color: rgba(0, 0, 0, 0.4); stop-opacity: 0.4" />
+      <stop offset="100%" style="stop-color: black; stop-opacity: 0.9" />
+    </radialGradient>
+  </defs>
+
+  <!-- Expanded Core Glow for Central Illumination -->
+  <circle class="lens-core" cx="50" cy="50" r="40" />
+  <circle class="lens-ring" cx="50" cy="50" r="45" />
+
+  <!-- Concentric Circles with Softer Contrast for Lens Structure -->
+  <circle class="lens-overlay" cx="50" cy="50" r="32" />
+  <circle class="lens-overlay" cx="50" cy="50" r="25" />
+  <circle class="lens-overlay" cx="50" cy="50" r="18" />
+  <circle class="lens-overlay" cx="50" cy="50" r="12" />
+
+  <!-- Darker Overlays with Soft Falloff -->
+  <circle class="lens-overlay-dark" cx="50" cy="50" r="42" />
+  <circle class="lens-overlay-dark" cx="50" cy="50" r="30" />
+  <circle class="lens-overlay-dark" cx="50" cy="50" r="22" />
+  <circle class="lens-overlay-dark" cx="50" cy="50" r="15" />
+
+  <!-- Outer Halo with Soft Glow for Full Illumination Effect -->
+  <circle class="outer-halo" cx="50" cy="50" r="60" />
+
+  <!-- Center Light for Strong, Focused Illumination -->
+  <circle class="center-light" cx="50" cy="50" r="8" />
+</svg>
+
+<!-- Color Control Example (Optimized for Yellow and Red) -->
+<div style="margin-top: 20px;">
+  <button onclick="changeColor('#ff0000')">Red</button>
+  <button onclick="changeColor('#ffc107')">Yellow</button>
+</div>
+
+<script>
+  function changeColor(color) {
+    document.documentElement.style.setProperty('--lens-color', color);
+  }
+</script>
+
+</body>
+</html>

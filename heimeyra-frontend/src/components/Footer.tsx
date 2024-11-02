@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+import Modal from './Modal';
 
 const Footer: React.FC = () => {
     const [showChangelog, setShowChangelog] = useState(false);
 
     const changelog = `
-        v1.0.0 - Initial Release
+        v1.0.0 - Alpha Release
         • Aircraft proximity monitoring
         • Customizable radius and altitude
         • Real-time map integration
@@ -13,24 +14,32 @@ const Footer: React.FC = () => {
 
     return (
         <div className="footer">
-            <p>
+            <div className="footer-content">
                 &copy; 2024 <a href="https://magnuscarlssen.substack.com" style={{ color: '#333', textDecoration: 'none' }}>Magnus Carlssen</a>
                 &nbsp;|&nbsp;
-                <span 
+                <a 
+                    href="#"
                     className="changelog-trigger"
-                    onMouseEnter={() => setShowChangelog(true)}
-                    onMouseLeave={() => setShowChangelog(false)}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        setShowChangelog(true);
+                    }}
                 >
                     changelog
-                </span>
-                {showChangelog && (
-                    <div className="warning-tooltip changelog">
-                        {changelog.split('\n').map((line, i) => (
-                            <div key={i}>{line.trim()}</div>
-                        ))}
-                    </div>
-                )}
-            </p>
+                </a>
+            </div>
+
+            <Modal 
+                isOpen={showChangelog}
+                onClose={() => setShowChangelog(false)}
+                title="Changelog"
+            >
+                <div className="changelog-content">
+                    {changelog.split('\n').map((line, i) => (
+                        <div key={i}>{line.trim()}</div>
+                    ))}
+                </div>
+            </Modal>
         </div>
     );
 };

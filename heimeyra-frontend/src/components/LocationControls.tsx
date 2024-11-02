@@ -71,7 +71,7 @@ const LocationControls: React.FC<LocationControlsProps> = ({
         max: number
     ) => {
         const percent = ((value - min) / (max - min)) * 100;
-        element.style.background = `linear-gradient(to right, var(--accent-color) 0%, var(--accent-color) ${percent}%, var(--border-color) ${percent}%, var(--border-color) 100%)`;
+        element.style.background = `linear-gradient(to right, var(--text-accent-color) 0%, var(--text-accent-color) ${percent}%, var(--border-color) ${percent}%, var(--border-color) 100%)`;
     };
 
     // Set initial slider backgrounds on mount

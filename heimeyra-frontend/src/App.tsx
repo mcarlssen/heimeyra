@@ -49,7 +49,7 @@ const App: React.FC = () => {
         <div className="app-container">
             <div className="top-banner">
                 <div className="banner-left">
-                    <div className="app-title">heimeyra</div>
+                    <div className="app-title"><i className="fa-solid fa-plane-circle-exclamation"></i> heimeyra</div>
                     <LoadingCountdown 
                         frequency={updateFrequency} 
                         startTime={updateTrigger}
@@ -86,10 +86,7 @@ const App: React.FC = () => {
                     />
                 </div>
             </div>
-
-            <div className="footer">
-                <Footer />
-            </div>
+            <Footer />
         </div>
     );
 };
