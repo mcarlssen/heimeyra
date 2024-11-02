@@ -4,7 +4,6 @@ import { useCookies } from 'react-cookie';
 import AircraftList from './components/AircraftList';
 import './App.css';
 import LocationControls from './components/LocationControls';
-import LoadingCountdown from './components/LoadingCountdown';
 import WarningIndicators from './components/WarningIndicators';
 import LocationMap from './components/LocationMap'; 
 import Footer from './components/Footer';
@@ -50,12 +49,6 @@ const App: React.FC = () => {
             <div className="top-banner">
                 <div className="banner-left">
                     <div className="app-title"><i className="fa-solid fa-plane-circle-exclamation"></i> heimeyra</div>
-                    <LoadingCountdown 
-                        frequency={updateFrequency} 
-                        startTime={updateTrigger}
-                        isPaused={isPaused}
-                        onPauseToggle={handlePauseToggle}
-                    />
                 </div>
                 <div className="banner-right">
                     <WarningIndicators 
@@ -83,6 +76,9 @@ const App: React.FC = () => {
                     <LocationControls 
                         onFrequencyChange={setUpdateFrequency}
                         frequency={updateFrequency}
+                        onCountdownComplete={handleUpdateComplete}
+                        isPaused={isPaused}
+                        onPauseToggle={handlePauseToggle}
                     />
                 </div>
             </div>

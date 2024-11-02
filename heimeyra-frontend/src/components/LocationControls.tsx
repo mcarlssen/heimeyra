@@ -2,10 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useCookies } from 'react-cookie';
 import api from '../api/api';
 import { useDebounce } from '../hooks/useDebounce';
+import LoadingCountdown from './LoadingCountdown';
 
 interface LocationControlsProps {
     onFrequencyChange: (freq: number) => void;
     frequency: number;
+    onCountdownComplete?: () => void;
+    isPaused?: boolean;
+    onPauseToggle?: () => void;
 }
 
 const statuteToNautical = (statuteMiles: number): number => {
@@ -18,7 +22,10 @@ const nauticalToStatute = (nauticalMiles: number): number => {
 
 const LocationControls: React.FC<LocationControlsProps> = ({ 
     onFrequencyChange, 
-    frequency 
+    frequency, 
+    onCountdownComplete, 
+    isPaused, 
+    onPauseToggle 
 }) => {
     const [cookies, setCookie] = useCookies(['userLocation', 'userRadius', 'userAltitude']);
 
@@ -203,21 +210,31 @@ const LocationControls: React.FC<LocationControlsProps> = ({
                 </div>
             </div>
 
-            <div className="update-frequency">
-                <label className="update-frequency-label">Refresh</label>
-                <div className="radio-group">
-                    {[1, 5, 10].map(freq => (
-                        <label key={freq} className="radio-label">
-                            <input
-                                type="radio"
-                                name="frequency"
-                                value={freq}
-                                checked={frequency === freq}
-                                onChange={() => onFrequencyChange(freq)}
-                            />
-                            {freq}s
-                        </label>
-                    ))}
+            <div className="controls-bottom">
+                <div className="countdown-container">
+                    <LoadingCountdown
+                        frequency={frequency}
+                        onComplete={onCountdownComplete}
+                        isPaused={isPaused}
+                        onPauseToggle={onPauseToggle}
+                    />
+                </div>
+                <div className="update-frequency">
+                    <label className="update-frequency-label">Refresh</label>
+                    <div className="radio-group">
+                        {[1, 5, 10].map(freq => (
+                            <label key={freq} className="radio-label">
+                                <input
+                                    type="radio"
+                                    name="frequency"
+                                    value={freq}
+                                    checked={frequency === freq}
+                                    onChange={() => onFrequencyChange(freq)}
+                                />
+                                {freq}s
+                            </label>
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>

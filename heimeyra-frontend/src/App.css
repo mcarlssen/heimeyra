@@ -519,3 +519,29 @@ input[type="radio"]:hover {
 .modal-close:hover {
     background: rgba(255, 255, 255, 0.1);
 }
+
+.controls-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.countdown-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.update-frequency {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.radio-group {
+    display: flex;
+    gap: 15px;
+}

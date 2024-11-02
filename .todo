@@ -1,8 +1,13 @@
-Add crosshairs to map
-Add footer ko-fi button
-fix footer changelog tooltip
-update indicator graphics - replace current gradient with image
-add "howto" readme that pops if it's the user's first visit
-add "help" and "about" links to header
-move countdown to radio button area
-swap current countdown with clock-style graphic
+## BUGS
+- Setting isPaused to false doesn't resume the backend, resuling in a data.filter error.
+  The frontend continues to cycle, resulting in stale data. When isPaused is toggled
+  from true -> false, AircraftList should be cleared and re-rendered.
+
+## FEATURES
+- Add crosshairs to map
+- Add footer ko-fi button
+- update indicator graphics - replace current gradient with image
+- add "howto" readme that pops if it's the user's first visit
+- add "help" and "about" links to header
+- move countdown to radio button area
+- swap current countdown with clock-style graphic
