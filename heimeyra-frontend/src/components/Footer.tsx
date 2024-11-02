@@ -20,16 +20,23 @@ const Footer: React.FC = () => {
             <div className="footer-content">
                 &copy; 2024 <a href="https://magnuscarlssen.substack.com" style={{ color: '#333', textDecoration: 'none' }}>Magnus Carlssen</a>
                 &nbsp;|&nbsp;
-                <a 
-                    href="#"
+                <button 
                     className="changelog-trigger"
                     onClick={(e) => {
                         e.preventDefault();
                         setShowChangelog(true);
                     }}
+                    style={{ 
+                        background: 'none',
+                        border: 'none',
+                        color: 'inherit',
+                        cursor: 'pointer',
+                        padding: 0,
+                        font: 'inherit'
+                    }}
                 >
                     changelog
-                </a>
+                </button>
             </div>
 
             <Modal 

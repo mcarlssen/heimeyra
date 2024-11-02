@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useCookies } from 'react-cookie';
 import api from '../api/api';
 
@@ -16,7 +16,6 @@ interface AircraftListProps {
     userRadius: number;
 }
 
-
 const AircraftList: React.FC<AircraftListProps> = ({ 
     onNearestUpdate,
     frequency,
@@ -25,7 +24,7 @@ const AircraftList: React.FC<AircraftListProps> = ({
     userRadius
 }) => {
     const [cookies] = useCookies(['userAltitude']);
-    const [maxAltitude, setMaxAltitude] = useState(cookies.userAltitude || 15000);
+    const maxAltitude = cookies.userAltitude || 15000;
     const [aircraftList, setAircraftList] = useState<Aircraft[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
@@ -76,7 +75,6 @@ const AircraftList: React.FC<AircraftListProps> = ({
         setLoading(true);
         try {
             const response = await api.get('/api/getAircrafts');
-            
             if (response.status === 200) {
                 if (response.data.stats) {
                     console.log('🛩️ heimeyra data updated:', response.data.stats);
@@ -99,10 +97,10 @@ const AircraftList: React.FC<AircraftListProps> = ({
     };
 
     useEffect(() => {
-        fetchAircrafts();
+        fetchAircrafts(); // Initial fetch
         const interval = setInterval(fetchAircrafts, frequency * 1000);
         return () => clearInterval(interval);
-    }, [frequency, maxAltitude]);
+    }, [frequency, isPaused]); // Only re-run when frequency or pause state changes
 
     return (
         <div className="aircraft-list">

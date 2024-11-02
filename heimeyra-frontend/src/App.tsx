@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import api from './api/api';
 import { useCookies } from 'react-cookie';
 import AircraftList from './components/AircraftList';
@@ -11,20 +11,11 @@ import Modal from './components/Modal';  // Your existing Modal component
 import { AboutContent, HelpContent } from './components/ModalContent';
 
 const App: React.FC = () => {
-    const [closestDistance, setClosestDistance] = useState<number>(Infinity);
-    const [error, setError] = useState<string | null>(null);
+    const [updateTrigger, setUpdateTrigger] = useState<number>(Date.now());
     const [cookies] = useCookies(['userLocation', 'userRadius', 'userAltitude']);
-    
-    // Default values for render, but don't set cookies
-    const userLocation = cookies.userLocation ?? {
-        lat: 47.6062,  // Seattle's latitude
-        lon: -122.3321 // Seattle's longitude
-    };
     const userRadius = cookies.userRadius ?? 1.5;
-    const userAltitude = cookies.userAltitude ?? 8000;
     const [updateFrequency, setUpdateFrequency] = useState<number>(5);
     const [nearestDistance, setNearestDistance] = useState<number>(Infinity);
-    const [updateTrigger, setUpdateTrigger] = useState(Date.now());
     const [isPaused, setIsPaused] = useState(false);
     const [aboutOpen, setAboutOpen] = useState(false);
     const [helpOpen, setHelpOpen] = useState(false);

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useCookies } from 'react-cookie';
 import api from '../api/api';
 import { useDebounce } from '../hooks/useDebounce';
-import LoadingCountdown from './LoadingCountdown';
 import { ToggleButtonGroup, ToggleButton, TextField } from '@mui/material';
 import PieTimer from './PieTimer';  // Add this import
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -82,29 +81,11 @@ const nauticalToStatute = (nauticalMiles: number): number => {
 const LocationControls: React.FC<LocationControlsProps> = ({ 
     onFrequencyChange, 
     frequency, 
-    onCountdownComplete, 
     isPaused, 
     onPauseToggle 
 }) => {
-    const frequencyValues = ['1s', '5s', '10s'];
-    
-    const getFrequencyNumber = (value: any): number => {
-        if (!value) {
-            console.log('Received undefined value');
-            return frequency; // return current frequency as fallback
-        }
-        
-        try {
-            // Handle both string and object cases
-            const stringValue = typeof value === 'object' ? value.value : value;
-            return parseInt(stringValue.replace('s', ''));
-        } catch (error) {
-            console.error('Error parsing frequency value:', value, error);
-            return frequency; // return current frequency as fallback
-        }
-    };
-
     const [cookies, setCookie] = useCookies(['userLocation', 'userRadius', 'userAltitude']);
+    const maxAltitude = cookies.userAltitude || 15000;  // Remove useState, just use const
 
     // Default values
     const DEFAULT_RADIUS = 1.5;
@@ -232,6 +213,21 @@ const LocationControls: React.FC<LocationControlsProps> = ({
         },
         [frequency, onFrequencyChange]
     );
+
+    useEffect(() => {
+        if (parsedLocation && cookies.userRadius && cookies.userAltitude) {
+            saveSettings(
+                parseFloat(cookies.userRadius),
+                parseFloat(cookies.userAltitude)
+            );
+        }
+    }, [
+        parsedLocation, 
+        cookies.userRadius, 
+        cookies.userAltitude, 
+        saveSettings, 
+        setCookie
+    ]);
 
     return (
         <div className="controls-container">
