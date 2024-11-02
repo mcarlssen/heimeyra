@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Map as PigeonMap } from 'pigeon-maps';
 import { useCookies } from 'react-cookie';
 import api from '../api/api';
+import type { Point } from 'pigeon-maps';
 
 interface LocationMapProps {
     center?: [number, number];
@@ -19,7 +20,7 @@ const LocationMap: React.FC<LocationMapProps> = ({
     zoom: initialZoom,
     onBoundsChanged
 }) => {
-    const [mapCenter, setMapCenter] = useState(initialCenter || [47.6062, -122.3321]);
+    const [mapCenter, setMapCenter] = useState<Point>(initialCenter || [47.6062, -122.3321]);
     const [mapZoom, setMapZoom] = useState(initialZoom || 8);
     const [cookies, setCookie] = useCookies(['userLocation']);
     const [error, setError] = useState<string | null>(null);
@@ -61,6 +62,12 @@ const LocationMap: React.FC<LocationMapProps> = ({
         // Optionally, send this info to the backend if needed
     };
 
+    const handleBoundsChanged = ({ center, zoom }: { center: Point; zoom: number }) => {
+        setMapCenter([center[0], center[1]]);
+        setMapZoom(zoom);
+        updateLocationCookies(center[0], center[1]);
+    };
+
     return (
         <div className="map-container">
             {error && (
@@ -74,12 +81,7 @@ const LocationMap: React.FC<LocationMapProps> = ({
                     center={mapCenter}
                     zoom={mapZoom}
                     provider={getProvider}
-                    onBoundsChanged={({ center, zoom }) => { 
-                        console.log('Map center changed to:', center);
-                        setMapCenter(center as [number, number]);
-                        setMapZoom(zoom);
-                        updateLocationCookies(center[0], center[1]);
-                    }}
+                    onBoundsChanged={handleBoundsChanged}
                 />
             </div>
         </div>
