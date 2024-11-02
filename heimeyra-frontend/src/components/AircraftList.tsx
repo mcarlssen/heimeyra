@@ -97,7 +97,8 @@ const AircraftList: React.FC<AircraftListProps> = ({
         fetchAircrafts(); // Initial fetch
         const interval = setInterval(fetchAircrafts, frequency * 1000);
         return () => clearInterval(interval);
-    }, [frequency, isPaused]); // Only re-run when frequency or pause state changes
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [frequency, isPaused]); // fetchAircrafts intentionally omitted to prevent infinite loop
 
     return (
         <div className="aircraft-list">

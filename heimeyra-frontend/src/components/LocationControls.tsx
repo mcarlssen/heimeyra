@@ -103,6 +103,27 @@ const LocationControls: React.FC<LocationControlsProps> = ({
         cookies.userAltitude || DEFAULT_ALTITUDE
     );
 
+    // Move saveSettings function before the useEffect that uses it
+    const saveSettings = useCallback(async (newRadius?: number, newAltitude?: number) => {
+        try {
+            const settingsData = {
+                lat: parsedLocation?.lat,
+                lon: parsedLocation?.lon,
+                radius: newRadius || radius,
+                altitude: newAltitude || altitude,
+            };
+
+            // Update cookies (but don't update userLocation cookie here)
+            setCookie('userRadius', settingsData.radius, { path: '/' });
+            setCookie('userAltitude', settingsData.altitude, { path: '/' });
+
+            await api.post('/api/setLocation', settingsData);
+            console.log('settingsData:', settingsData);
+        } catch (err) {
+            console.error('Error saving settings:', err);
+        }
+    }, [parsedLocation, radius, altitude, setCookie]);
+
     // Set default cookies on mount if they don't exist
     useEffect(() => {
         if (!cookies.userRadius) {
@@ -117,7 +138,7 @@ const LocationControls: React.FC<LocationControlsProps> = ({
         if (parsedLocation && (!cookies.userRadius || !cookies.userAltitude)) {
             saveSettings(DEFAULT_RADIUS, DEFAULT_ALTITUDE);
         }
-    }, []);  // Run once on mount
+    }, [cookies.userRadius, cookies.userAltitude, parsedLocation, saveSettings]);  // Run once on mount
 
     // Update state when cookies change
     useEffect(() => {
@@ -149,35 +170,16 @@ const LocationControls: React.FC<LocationControlsProps> = ({
         if (altitudeSlider) {
             updateSliderBackground(altitudeSlider, altitude, 1000, 47000);
         }
-    }, []); // Run once on mount
-    
-    const debounce = (func: Function, wait: number) => {
-        let timeout: NodeJS.Timeout;
-        return (...args: any[]) => {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => func(...args), wait);
-        };
-    };
+    }, [radius, altitude]); // Run once on mount
 
-    const saveSettings = async (newRadius?: number, newAltitude?: number) => {
-        try {
-            const settingsData = {
-                lat: parsedLocation?.lat,
-                lon: parsedLocation?.lon,
-                radius: newRadius || radius,
-                altitude: newAltitude || altitude,
-            };
-
-            // Update cookies (but don't update userLocation cookie here)
-            setCookie('userRadius', settingsData.radius, { path: '/' });
-            setCookie('userAltitude', settingsData.altitude, { path: '/' });
-
-            await api.post('/api/setLocation', settingsData);
-            console.log('settingsData:', settingsData);
-        } catch (err) {
-            console.error('Error saving settings:', err);
+    useEffect(() => {
+        if (parsedLocation && cookies.userRadius && cookies.userAltitude) {
+            saveSettings(
+                parseFloat(cookies.userRadius),
+                parseFloat(cookies.userAltitude)
+            );
         }
-    };
+    }, [parsedLocation, radius, altitude, saveSettings,setCookie]);
 
     // Debounced save function (500ms delay)
     const debouncedSave = useDebounce(async (newRadius?: number, newAltitude?: number) => {
@@ -212,21 +214,6 @@ const LocationControls: React.FC<LocationControlsProps> = ({
         },
         [frequency, onFrequencyChange]
     );
-
-    useEffect(() => {
-        if (parsedLocation && cookies.userRadius && cookies.userAltitude) {
-            saveSettings(
-                parseFloat(cookies.userRadius),
-                parseFloat(cookies.userAltitude)
-            );
-        }
-    }, [
-        parsedLocation, 
-        cookies.userRadius, 
-        cookies.userAltitude, 
-        saveSettings, 
-        setCookie
-    ]);
 
     return (
         <div className="controls-container">
