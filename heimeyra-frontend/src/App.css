@@ -202,36 +202,18 @@ body {
 }
 
 .indicator {
-    width: 40px;  /* Match height of countdown timer */
-    height: 40px;
+    width: 60px;  /* Match height of countdown timer */
+    height: 60px;
     border-radius: 50%;
     transition: background-color 0.3s ease;
     background-color: #808080;
-    border:1px solid var(--secondary-bg);
 }
 
-/* https://cssgradient.io/ */
+/* https://cssgradient.io/, https://cloudconvert.com/png-to-webp  */
 
-.indicator.gray { background-color: #808080; }
-.indicator.yellow { 
-    /* background-color: #FFC107; */
-    background: linear-gradient(31deg, rgba(252,202,54,0.9121849423363095) 0%, rgba(255,217,101,1) 33%, rgba(255,227,142,1) 37%, rgba(255,227,142,1) 44%, rgba(255,193,7,1) 49%, rgba(255,171,4,1) 67%, rgba(255,193,78,1) 76%, rgba(255,144,0,1) 100%); 
-    filter:drop-shadow(1px 2px 12px #ffc107);
-
-}
-.indicator.red { 
-    background: linear-gradient(31deg, 
-        rgba(255,82,82,0.9) 0%, 
-        rgba(255,122,122,1) 33%, 
-        rgba(255,150,150,1) 37%, 
-        rgba(255,150,150,1) 44%, 
-        rgba(255,82,82,1) 49%, 
-        rgba(255,60,60,1) 67%, 
-        rgba(255,100,100,1) 76%, 
-        rgba(255,40,40,1) 100%
-    ); 
-    filter: drop-shadow(1px 2px 12px #ff5252);
-}
+.indicator.gray { background-image: url('../public/images/indicator-off.webp'); }
+.indicator.yellow { background-image: url('../public/images/indicator-yellow.webp'); }
+.indicator.red { background-image: url('../public/images/indicator-red.webp'); }
 
 .aircraft-item {
     display: flex;

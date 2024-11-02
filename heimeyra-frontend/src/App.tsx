@@ -30,9 +30,25 @@ const App: React.FC = () => {
 
     const aboutContent = (
         <>
-            <h2>About Heimeyra</h2>
             <p>Heimeyra is a real-time aircraft tracking visualization tool.</p>
             <p>Version 1.0.0</p>
+            <a 
+                href='https://ko-fi.com/U7U24513O' 
+                target='_blank' 
+                rel="noopener noreferrer"
+                className="kofi-button"
+                style={{ 
+                    backgroundColor: '#ebb400',
+                    color: '#fff',
+                    padding: '5px 15px',
+                    borderRadius: '4px',
+                    textDecoration: 'none',
+                    display: 'inline-block',
+                    fontWeight: 'bold'
+                }}
+            >
+                ☕ Caffeinate the code hamster
+            </a>
         </>
     );
 

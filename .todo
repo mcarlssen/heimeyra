@@ -5,7 +5,6 @@
 
 ## FEATURES
 - Add crosshairs to map
-- Add footer ko-fi button
-- update indicator graphics - replace current gradient with image
 - add "howto" readme that pops if it's the user's first visit
 - update 'about' and 'help' text
+- change the lat/long text boxes to use MaterialUi Text Field

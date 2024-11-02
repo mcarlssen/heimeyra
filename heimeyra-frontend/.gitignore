@@ -1,4 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+/public/images/*.png
+/public/images/*.psd
+/public/skyfont-noncommercial.otf
+
 
 # dependencies
 /node_modules
