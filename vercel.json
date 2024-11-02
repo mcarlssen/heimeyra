@@ -1,19 +1,24 @@
 {
-    "version": 1,
+    "version": 2,
     "builds": [
-      {
-        "src": "heimeyra-frontend/package.json",
-        "use": "@vercel/static-build",
-        "config": { "distDir": "heimeyra-frontend/build" }
-      },
-      {
-        "src": "api/**/*.ts",
-        "use": "@vercel/node"
-      }
+        {
+            "src": "heimeyra-frontend/package.json",
+            "use": "@vercel/static-build",
+            "config": { "distDir": "build" }
+        },
+        {
+            "src": "server.js",
+            "use": "@vercel/node"
+        }
     ],
     "routes": [
-      { "handle": "filesystem" },
-      { "src": "/api/(.*)", "dest": "/api/$1" },
-      { "src": "/(.*)", "dest": "/index.html" }
+        {
+            "src": "/api/(.*)",
+            "dest": "server.js"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "heimeyra-frontend/build/$1"
+        }
     ]
-  }
+}

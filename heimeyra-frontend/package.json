@@ -26,10 +26,10 @@
   },
   "scripts": {
     "start": "react-app-rewired start",
-    "build": "react-app-rewired build && cp public/warning-popup.html build/",
+    "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",
-    "vercel-build": "react-app-rewired build && cp public/warning-popup.html build/"
+    "vercel-build": "react-app-rewired build"
   },
   "eslintConfig": {
     "extends": [

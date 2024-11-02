@@ -6,7 +6,8 @@
     "scripts": {
         "start": "node server.js",
         "dev": "nodemon server.js",
-        "vercel-build": "cd heimeyra-frontend && yarn install && yarn vercel-build"
+        "build": "cd heimeyra-frontend && yarn install && yarn build",
+        "vercel-build": "cd heimeyra-frontend && yarn install && yarn build"
     },
     "dependencies": {
         "axios": "^1.7.7",
