@@ -83,8 +83,12 @@ app.get('/api/getAircrafts', async (req, res) => {
             altitude: ac.alt_baro || 'N/A',
             distance: ac.dst || 'N/A',
         }));
-        console.log("Lat:", lat, "Lon:", lon, "Radius:", radius, "Altitude:", altitude,"Count:", aircraftData.length); // Log the values
-        res.status(200).json(aircraftData);
+        const logMessage = `Lat: ${lat}, Lon: ${lon}, Radius: ${radius}, Altitude: ${altitude}, Count: ${aircraftData.length}`;
+        console.log(logMessage); // Keep server-side logging
+        res.status(200).json({ 
+            data: aircraftData,
+            stats: logMessage 
+        });
     } catch (error) {
         console.error("Error fetching data:", error);
         res.status(500).json({ message: 'Error fetching aircraft data' });

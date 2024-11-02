@@ -31,7 +31,7 @@ const WarningIndicators: React.FC<WarningIndicatorsProps> = ({ distance, userRad
 
     const openPopup = () => {
         const popup = window.open('warning-popup.html', 'WarningIndicators',
-            'width=180,height=80,resizable=yes,frame=false,titlebar=false,toolbar=false'
+            'width=210,height=80,resizable=yes,frame=false,titlebar=false,toolbar=false'
         );
         
         if (popup) {

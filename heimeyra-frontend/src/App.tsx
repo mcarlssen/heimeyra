@@ -8,6 +8,7 @@ import WarningIndicators from './components/WarningIndicators';
 import LocationMap from './components/LocationMap'; 
 import Footer from './components/Footer';
 import Modal from './components/Modal';  // Your existing Modal component
+import { AboutContent, HelpContent } from './components/ModalContent';
 
 const App: React.FC = () => {
     const [closestDistance, setClosestDistance] = useState<number>(Infinity);
@@ -27,40 +28,6 @@ const App: React.FC = () => {
     const [isPaused, setIsPaused] = useState(false);
     const [aboutOpen, setAboutOpen] = useState(false);
     const [helpOpen, setHelpOpen] = useState(false);
-
-    const aboutContent = (
-        <>
-            <p>Heimeyra is a real-time aircraft tracking visualization tool.</p>
-            <p>Version 1.0.0</p>
-            <a 
-                href='https://ko-fi.com/U7U24513O' 
-                target='_blank' 
-                rel="noopener noreferrer"
-                className="kofi-button"
-                style={{ 
-                    backgroundColor: '#ebb400',
-                    color: '#fff',
-                    padding: '5px 15px',
-                    borderRadius: '4px',
-                    textDecoration: 'none',
-                    display: 'inline-block',
-                    fontWeight: 'bold'
-                }}
-            >
-                ☕ Caffeinate the code hamster
-            </a>
-        </>
-    );
-
-    const helpContent = (
-        <>
-            <h2>Help</h2>
-            <h3>Getting Started</h3>
-            <p>1. Set your location using the latitude and longitude fields</p>
-            <p>2. Adjust the radius to define your search area</p>
-            <p>3. Set your preferred refresh rate</p>
-        </>
-    );
 
     const handlePauseToggle = async () => {
         const newPauseState = !isPaused;
@@ -138,7 +105,7 @@ const App: React.FC = () => {
                 onClose={() => setAboutOpen(false)}
                 title="About"
             >
-                {aboutContent}
+                <AboutContent />
             </Modal>
 
             <Modal 
@@ -146,7 +113,7 @@ const App: React.FC = () => {
                 onClose={() => setHelpOpen(false)}
                 title="Help"
             >
-                {helpContent}
+                <HelpContent />
             </Modal>
         </div>
     );

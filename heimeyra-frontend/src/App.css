@@ -412,7 +412,7 @@ body {
     right: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.8);
-    /* backdrop-filter: blur(3px); */
+    backdrop-filter: blur(3px); 
     display: flex;
     align-items: flex-start;
     justify-content: center;
@@ -424,7 +424,7 @@ body {
     opacity:0.925;
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    width: 50vh;
+    width: 60vh;
     max-height: 80vh;
     overflow-y: auto;
     padding: 20px;
@@ -542,4 +542,52 @@ body {
 
 .header-link:hover {
     color: #ebb400;
+}
+
+/* Style overrides for Material-UI TextFields */
+.location-inputs .MuiTextField-root .MuiOutlinedInput-root {
+    background-color: var(--secondary-bg);
+    border-radius: 15px;
+    font-size: 1em;
+    font-family: 'Hind', sans-serif;
+
+}
+
+.location-inputs .MuiTextField-root .MuiInputLabel-root,
+.location-inputs .MuiTextField-root .MuiOutlinedInput-input {
+    color: #888;
+    font-size: 1em;
+}
+
+.location-inputs .MuiTextField-root .MuiOutlinedInput-notchedOutline {
+    border-color: var(--border-color);
+
+}
+
+.modal-content p {
+    margin-bottom: 10px;
+}
+
+.modal-content a {
+    color: var(--text-accent-color);
+}
+
+.modal-content img {
+    display:flex;
+    margin:auto;
+    padding-top:10px;
+}
+/* Optional: remove margin from last paragraph to avoid extra space at bottom */
+.modal-content p:last-child {
+    margin-bottom: 0;
+}
+
+.modal-content .fa-solid, .modal-content .fa-regular {
+    vertical-align: middle;
+    margin-right: 5px;  /* Optional: adds a small space between icon and text */
+    color: var(--text-accent-color);
+}
+
+.modal-content .help-content p {
+    padding-bottom: 20px;
 }

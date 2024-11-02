@@ -17,7 +17,7 @@ body {
     background-color: var(--secondary-bg);
     border-radius: 15px;
     -webkit-app-region: drag;
-    min-width: 100px;
+    min-width: 120px;
     min-height: 60px;
     padding: 10px !important;  /* Force override */
     box-sizing: border-box;

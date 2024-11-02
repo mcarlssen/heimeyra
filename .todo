@@ -1,10 +1,9 @@
-## BUGS
+## KNOWN ISSUES
 - Setting isPaused to false sometimes doesn't resume the backend, resulting in a data.filter error.
   The frontend continues to cycle, resulting in stale data. When isPaused is toggled
   from true -> false, AircraftList should be cleared and re-rendered.
 
-## FEATURES
+## FEATURES TODO
 - Add crosshairs to map
-- add "howto" readme that pops if it's the user's first visit
-- update 'about' and 'help' text
-- change the lat/long text boxes to use MaterialUi Text Field
+- add sentry/bugsnag logging
+- add readme.md

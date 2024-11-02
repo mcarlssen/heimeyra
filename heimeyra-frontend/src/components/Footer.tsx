@@ -5,11 +5,14 @@ const Footer: React.FC = () => {
     const [showChangelog, setShowChangelog] = useState(false);
 
     const changelog = `
-        v1.0.0 - Alpha Release
-        • Aircraft proximity monitoring
-        • Customizable radius and altitude
-        • Real-time map integration
-        • Detachable warning indicators
+        v1.0.0 - Alpha Release - Nov 2, 2024
+        • Interactive map to choose location
+        • Customizable radius, altitude, and update frequency filters
+        • Stepped warning levels 
+        • Detachable warning indicator
+
+        # known issues
+        • sometimes unpausing does nothing. refresh page to reset.
     `;
 
     return (

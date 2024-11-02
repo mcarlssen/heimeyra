@@ -78,8 +78,11 @@ const AircraftList: React.FC<AircraftListProps> = ({
             const response = await api.get('/api/getAircrafts');
             
             if (response.status === 200) {
-                filterAndDisplayAircraft(response.data);
-                onUpdateComplete(); // Signal completion
+                if (response.data.stats) {
+                    console.log('🛩️ heimeyra data updated:', response.data.stats);
+                }
+                filterAndDisplayAircraft(response.data.data);
+                onUpdateComplete();
             } else {
                 setError(response.data.message || 'Refresh paused');
             }

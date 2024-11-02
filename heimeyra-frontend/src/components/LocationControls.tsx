@@ -3,7 +3,7 @@ import { useCookies } from 'react-cookie';
 import api from '../api/api';
 import { useDebounce } from '../hooks/useDebounce';
 import LoadingCountdown from './LoadingCountdown';
-import { ToggleButtonGroup, ToggleButton } from '@mui/material';
+import { ToggleButtonGroup, ToggleButton, TextField } from '@mui/material';
 import PieTimer from './PieTimer';  // Add this import
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
@@ -236,24 +236,26 @@ const LocationControls: React.FC<LocationControlsProps> = ({
     return (
         <div className="controls-container">
             <div className="location-inputs">
-                <div className="input-group">
-                    <label>Latitude</label>
-                    <input
-                        type="text"
-                        value={lat}
-                        readOnly
-                        placeholder="No location set"
-                    />
-                </div>
-                <div className="input-group">
-                    <label>Longitude</label>
-                    <input
-                        type="text"
-                        value={lon}
-                        readOnly
-                        placeholder="No location set"
-                    />
-                </div>
+            <TextField
+                label="Latitude"
+                value={lat}
+                InputProps={{
+                    readOnly: true,
+                }}
+                placeholder="No location set"
+                size="medium"
+                fullWidth
+            />
+            <TextField
+                label="Longitude"
+                value={lon}
+                InputProps={{
+                    readOnly: true,
+                }}
+                placeholder="No location set"
+                size="medium"
+               fullWidth
+       />
             </div>
 
             <div className="sliders-container">
