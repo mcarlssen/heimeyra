@@ -5,6 +5,9 @@ import { useDebounce } from '../hooks/useDebounce';
 import { ToggleButtonGroup, ToggleButton, TextField } from '@mui/material';
 import PieTimer from './PieTimer';  // Add this import
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faOne, faFive } from '../fontawesome';
+
 
 // Create theme outside of component to prevent recreation on each render
 const theme = createTheme({
@@ -309,10 +312,10 @@ const LocationControls: React.FC<LocationControlsProps> = ({
                                 size="small"
                             >
                                 <ToggleButton value="1">
-                                    <i className="fa-solid fa-1"></i>
+                                    <FontAwesomeIcon icon={faOne} />
                                 </ToggleButton>
                                 <ToggleButton value="5">
-                                    <i className="fa-solid fa-5"></i>
+                                    <FontAwesomeIcon icon={faFive} />
                                 </ToggleButton>
                                 <ToggleButton value="10">
                                     <i className="fa-solid fa-1"></i>
@@ -348,7 +351,7 @@ const LocationControls: React.FC<LocationControlsProps> = ({
                                 minHeight: '50px'
                             }}
                         >
-                            <i className="fa-solid fa-circle-pause" style={{ fontSize: '36px' }}  />
+                            <FontAwesomeIcon icon="circle-pause" style={{ fontSize: '36px' }} />
                         </ToggleButton>
                     </ThemeProvider>
                 </div>

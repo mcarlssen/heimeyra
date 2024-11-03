@@ -1,4 +1,5 @@
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export const AboutContent: React.FC = () => (
     <>
@@ -31,21 +32,42 @@ export const AboutContent: React.FC = () => (
 export const HelpContent: React.FC = () => (
     <>
         <div className="help-content">
-            <p><i className="fa-solid fa-globe fa-xl"></i> <b>Move the map around to select a location</b>.</p>
             <p>
-            <i className="fa-regular fa-circle-dot fa-xl"></i> 
-            <b>set the 'Radius' slider to the <i>distance where you start to hear an aircraft.</i></b>
-            <br /> 
-            <span style={{ display: 'block', paddingLeft: '30px' }}>
-                Some trial and error may be needed to figure out the proper distance.
-            </span>
+                <FontAwesomeIcon icon="globe" className="fa-xl fa-icon" /> 
+                <b>Move the map around to select a location</b>.
             </p>
-            <p>&nbsp;<i className="fa-solid fa-traffic-light fa-xl fa-rotate-90"></i>&nbsp;&nbsp;Mouse over the stoplight to see the current radius stages based on your settings.</p>
-            <p><i className="fa-solid fa-cloud-arrow-up fa-xl"></i> use the 'Max Altitude' slider to filter out high-flying aircraft that are inaudible anyway.</p>
-            <p><i className="fa-solid fa-hourglass-end fa-xl"></i> the default update frequency is 5 seconds. adjust to your needs.</p>
-            <p><i className="fa-solid fa-skull-crossbones fa-xl"></i> <b>if it all goes sideways, or the list isn't updating, shift+reload the page.</b></p>
-            <p><i className="fa-solid fa-bug fa-xl"></i> if unpausing does nothing, check the browser console for new data logs, and see above.</p>
-            <p><i className="fa-solid fa-bugs fa-xl"></i> <a href="https://github.com/mcarlssen/heimeyra/issues" target="_blank" rel="noopener noreferrer">report new bugs</a>, please and thank you!</p>
+            <p>
+                <FontAwesomeIcon icon={['far', 'circle-dot']} className="fa-xl fa-icon" />
+                <b>set the 'Radius' slider to the <i>distance where you start to hear an aircraft.</i></b>
+                <br /> 
+                <span style={{ display: 'block', paddingLeft: '30px' }}>
+                    Some trial and error may be needed to figure out the proper distance.
+                </span>
+            </p>
+            <p>
+                <FontAwesomeIcon icon="traffic-light" className="fa-xl fa-icon fa-rotate-90" />
+                &nbsp;&nbsp;Mouse over the stoplight to see the current radius stages based on your settings.
+            </p>
+            <p>
+                <FontAwesomeIcon icon="cloud-arrow-up" className="fa-xl fa-icon" />
+                &nbsp;use the 'Max Altitude' slider to filter out high-flying aircraft that are inaudible anyway.
+            </p>
+            <p>
+                <FontAwesomeIcon icon="hourglass-end" className="fa-xl fa-icon" />
+                &nbsp;the default update frequency is 5 seconds. adjust to your needs.
+            </p>
+            <p>
+                <FontAwesomeIcon icon="skull-crossbones" className="fa-xl fa-icon" />
+                &nbsp;<b>if it all goes sideways, or the list isn't updating, shift+reload the page.</b>
+            </p>
+            <p>
+                <FontAwesomeIcon icon="bug" className="fa-xl fa-icon" />
+                &nbsp;if unpausing does nothing, check the browser console for new data logs, and see above.
+            </p>
+            <p>
+                <FontAwesomeIcon icon="bugs" className="fa-xl fa-icon" />
+                &nbsp;<a href="https://github.com/mcarlssen/heimeyra/issues" target="_blank" rel="noopener noreferrer">report new bugs</a>, please and thank you!
+            </p>
         </div>
     </>
 ); 

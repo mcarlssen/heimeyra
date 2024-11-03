@@ -9,6 +9,7 @@ import LocationMap from './components/LocationMap';
 import Footer from './components/Footer';
 import Modal from './components/Modal';  // Your existing Modal component
 import { AboutContent, HelpContent } from './components/ModalContent';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const App: React.FC = () => {
     const [cookies] = useCookies(['userLocation', 'userRadius', 'userAltitude']);
@@ -37,19 +38,21 @@ const App: React.FC = () => {
         <div className="app-container">
             <div className="top-banner">
                 <div className="banner-left">
-                    <div className="app-title"><i className="fa-solid fa-plane-circle-exclamation"></i> heimeyra</div>
+                    <div className="app-title">
+                        <FontAwesomeIcon icon="plane-circle-exclamation" /> heimeyra
+                    </div>
                     <div className="header-links">
-                    <h2 
+                        <h2 
                         className="header-link" 
                         onClick={() => setAboutOpen(true)}
                     >
-                        About
+                        <FontAwesomeIcon icon="circle-info" />
                     </h2>
                     <h2 
                         className="header-link" 
                         onClick={() => setHelpOpen(true)}
                     >
-                        Help
+                        <FontAwesomeIcon icon="circle-question" />
                         </h2>
                     </div>
                 </div>
