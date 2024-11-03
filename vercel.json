@@ -20,11 +20,16 @@
             "dest": "server.js"
         },
         {
-            "handle": "filesystem"
+            "src": "/static/(.*)",
+            "dest": "/heimeyra-frontend/static/$1"
+        },
+        {
+            "src": "^/(.+\\.[a-zA-Z]+)$",
+            "dest": "/heimeyra-frontend/$1"
         },
         {
             "src": "/(.*)",
-            "dest": "/index.html"
+            "dest": "/heimeyra-frontend/index.html"
         }
     ]
 }
