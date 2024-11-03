@@ -16,8 +16,12 @@
             "dest": "server.js"
         },
         {
+            "src": "/",
+            "dest": "/heimeyra-frontend/index.html"
+        },
+        {
             "src": "/(.*)",
-            "dest": "heimeyra-frontend/build/$1"
+            "dest": "/heimeyra-frontend/$1"
         }
     ]
 }
