@@ -6,7 +6,7 @@ import { ToggleButtonGroup, ToggleButton, TextField } from '@mui/material';
 import PieTimer from './PieTimer';  // Add this import
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faOne, faFive } from '../fontawesome';
+import { faOne, faFive, faZero } from '../fontawesome';
 
 
 // Create theme outside of component to prevent recreation on each render
@@ -318,8 +318,8 @@ const LocationControls: React.FC<LocationControlsProps> = ({
                                     <FontAwesomeIcon icon={faFive} />
                                 </ToggleButton>
                                 <ToggleButton value="10">
-                                    <i className="fa-solid fa-1"></i>
-                                    <i className="fa-solid fa-0"></i>
+                                    <FontAwesomeIcon icon={faOne} />
+                                    <FontAwesomeIcon icon={faZero} />
                                 </ToggleButton>
                             </ToggleButtonGroup>
                             
