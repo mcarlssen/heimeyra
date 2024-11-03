@@ -2,8 +2,8 @@
 - Setting isPaused to false sometimes doesn't resume the backend, resulting in a data.filter error.
   The frontend continues to cycle, resulting in stale data. When isPaused is toggled
   from true -> false, AircraftList should be cleared and re-rendered.
+- Radius and ALtitude is retained in cookies on close & reload, but map location is not.
 
 ## FEATURES TODO
 - Add crosshairs to map
 - add sentry/bugsnag logging
-- add readme.md
