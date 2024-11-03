@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useCookies } from 'react-cookie';
 import api from '../api/api';
 import { useDebounce } from '../hooks/useDebounce';
@@ -85,6 +85,7 @@ const LocationControls: React.FC<LocationControlsProps> = ({
     onPauseToggle 
 }) => {
     const [cookies, setCookie] = useCookies(['userLocation', 'userRadius', 'userAltitude']);
+    const prevLocationRef = useRef(null);  // Move ref here, at component level
 
     // Default values
     const DEFAULT_RADIUS = 1.5;
@@ -92,6 +93,8 @@ const LocationControls: React.FC<LocationControlsProps> = ({
 
     // Access userLocation directly without parsing
     const parsedLocation = cookies.userLocation || null;
+
+    console.log('LocationControls render:', { parsedLocation, cookies });
 
     // Initialize state with parsed values or defaults
     const [lat, setLat] = useState(parsedLocation?.lat || '');
@@ -106,6 +109,7 @@ const LocationControls: React.FC<LocationControlsProps> = ({
     // Move saveSettings function before the useEffect that uses it
     const saveSettings = useCallback(async (newRadius?: number, newAltitude?: number) => {
         try {
+            console.log('saveSettings called at:', Date.now(), { newRadius, newAltitude });
             const settingsData = {
                 lat: parsedLocation?.lat,
                 lon: parsedLocation?.lon,
@@ -124,21 +128,23 @@ const LocationControls: React.FC<LocationControlsProps> = ({
         }
     }, [parsedLocation, radius, altitude, setCookie]);
 
-// eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
-        if (!cookies.userRadius) {
-            const defaultRadiusNautical = statuteToNautical(DEFAULT_RADIUS);
-            setCookie('userRadius', defaultRadiusNautical, { path: '/' });
-        }
-        if (!cookies.userAltitude) {
-            setCookie('userAltitude', DEFAULT_ALTITUDE, { path: '/' });
-        }
+        // Only run this once on mount
+        if (!cookies.userRadius || !cookies.userAltitude) {
+            // Set cookies individually to satisfy TypeScript
+            if (!cookies.userRadius) {
+                setCookie('userRadius', statuteToNautical(DEFAULT_RADIUS), { path: '/' });
+            }
+            if (!cookies.userAltitude) {
+                setCookie('userAltitude', DEFAULT_ALTITUDE, { path: '/' });
+            }
 
-        // If we have location but missing other settings, save them to backend
-        if (parsedLocation && (!cookies.userRadius || !cookies.userAltitude)) {
-            saveSettings(DEFAULT_RADIUS, DEFAULT_ALTITUDE);
+            // Only call API if we have location and needed to set cookies
+            if (parsedLocation && (!cookies.userRadius || !cookies.userAltitude)) {
+                saveSettings(DEFAULT_RADIUS, DEFAULT_ALTITUDE);
+            }
         }
-    }, [cookies.userRadius, cookies.userAltitude, parsedLocation, saveSettings]);  // Run once on mount
+    }, []); // Empty dependency array - only run once on mount
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
@@ -147,6 +153,21 @@ const LocationControls: React.FC<LocationControlsProps> = ({
             setLon(parsedLocation.lon);
         }
     }, [parsedLocation]);
+
+    useEffect(() => {
+        if (parsedLocation && 
+            cookies.userRadius && 
+            cookies.userAltitude && 
+            // Only save if location actually changed
+            JSON.stringify(prevLocationRef.current) !== JSON.stringify(parsedLocation)
+        ) {
+            prevLocationRef.current = parsedLocation;
+            saveSettings(
+                parseFloat(cookies.userRadius),
+                parseFloat(cookies.userAltitude)
+            );
+        }
+    }, [parsedLocation, cookies.userRadius, cookies.userAltitude, saveSettings]);
 
     // Function to update slider background
     const updateSliderBackground = (
@@ -171,15 +192,6 @@ const LocationControls: React.FC<LocationControlsProps> = ({
             updateSliderBackground(altitudeSlider, altitude, 1000, 47000);
         }
     }, [radius, altitude]); // Run once on mount
-
-    useEffect(() => {
-        if (parsedLocation && cookies.userRadius && cookies.userAltitude) {
-            saveSettings(
-                parseFloat(cookies.userRadius),
-                parseFloat(cookies.userAltitude)
-            );
-        }
-    }, [parsedLocation]);
 
     // Debounced save function (500ms delay)
     const debouncedSave = useDebounce(async (newRadius?: number, newAltitude?: number) => {
