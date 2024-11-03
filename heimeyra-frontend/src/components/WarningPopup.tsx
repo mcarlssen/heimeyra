@@ -6,18 +6,21 @@ interface WarningPopupProps {
 }
 
 const WarningPopup: React.FC<WarningPopupProps> = ({ distance, userRadius }) => {
+    console.log('WarningPopup rendering with:', { distance, userRadius });
     const getIndicatorStates = () => {
         const statuteDistance = distance * 1.15078;
         const radiusFraction = statuteDistance / userRadius;
-
-        if (radiusFraction <= 1.25) return ['red', 'red'];
-        if (radiusFraction <= 1.75) return ['yellow', 'red'];
-        if (radiusFraction <= 2.5) return ['yellow', 'yellow'];
-        if (radiusFraction <= 3.5) return ['gray', 'yellow'];
-        return ['gray', 'gray'];
+        const states = radiusFraction <= 1.25 ? ['red', 'red'] :
+                      radiusFraction <= 1.75 ? ['yellow', 'red'] :
+                      radiusFraction <= 2.5 ? ['yellow', 'yellow'] :
+                      radiusFraction <= 3.5 ? ['gray', 'yellow'] :
+                      ['gray', 'gray'];
+        console.log('Indicator states calculated:', states);
+        return states;
     };
 
     const [indicator1, indicator2] = getIndicatorStates();
+    console.log('Final indicator states:', { indicator1, indicator2 });
 
     return (
         <div className="warning-popup">
