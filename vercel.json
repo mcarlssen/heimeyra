@@ -6,7 +6,7 @@
             "use": "@vercel/static-build",
             "config": {
                 "buildCommand": "cd heimeyra-frontend && npm install && npm run build",
-                "outputDirectory": "heimeyra-frontend/build"
+                "outputDirectory": "build"
             }
         },
         {
@@ -20,20 +20,11 @@
             "dest": "server.js"
         },
         {
-            "src": "/static/(.*)",
-            "dest": "/heimeyra-frontend/build/static/$1"
-        },
-        {
-            "src": "/assets/(.*)",
-            "dest": "/heimeyra-frontend/build/assets/$1"
-        },
-        {
-            "src": "/(.+\\.[a-zA-Z]+)$",
-            "dest": "/heimeyra-frontend/build/$1"
+            "handle": "filesystem"
         },
         {
             "src": "/(.*)",
-            "dest": "/heimeyra-frontend/build/index.html"
+            "dest": "/index.html"
         }
     ]
 }
