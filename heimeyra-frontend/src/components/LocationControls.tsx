@@ -179,7 +179,7 @@ const LocationControls: React.FC<LocationControlsProps> = ({
                 parseFloat(cookies.userAltitude)
             );
         }
-    }, [parsedLocation, radius, altitude, saveSettings,setCookie]);
+    }, [parsedLocation]);
 
     // Debounced save function (500ms delay)
     const debouncedSave = useDebounce(async (newRadius?: number, newAltitude?: number) => {
