@@ -10,6 +10,7 @@ import Footer from './components/Footer';
 import Modal from './components/Modal';  // Your existing Modal component
 import { AboutContent, HelpContent } from './components/ModalContent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Analytics } from "@vercel/analytics/react"
 
 const App: React.FC = () => {
     const [cookies] = useCookies(['userLocation', 'userRadius', 'userAltitude']);
@@ -101,7 +102,9 @@ const App: React.FC = () => {
             >
                 <HelpContent />
             </Modal>
+            <Analytics />
         </div>
+
     );
 };
 
