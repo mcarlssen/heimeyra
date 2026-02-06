@@ -54,7 +54,11 @@ export const HelpContent: React.FC = () => (
             </p>
             <p>
                 <FontAwesomeIcon icon="hourglass-end" className="fa-xl fa-icon" />
-                &nbsp;the default update frequency is 5 seconds. adjust to your needs.
+                &nbsp;<b>refresh is fixed at 15 seconds</b> to reduce API errors.
+                <br />
+                <span style={{ display: 'block', paddingLeft: '30px' }}>
+                    The upstream aircraft data provider now rate-limits free accounts to 500 requests per 24 hours, and polling too aggressively can cause periodic HTTP 500 errors.
+                </span>
             </p>
             <p>
                 <FontAwesomeIcon icon="skull-crossbones" className="fa-xl fa-icon" />

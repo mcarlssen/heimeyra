@@ -15,7 +15,10 @@ import { Analytics } from "@vercel/analytics/react"
 const App: React.FC = () => {
     const [cookies] = useCookies(['userLocation', 'userRadius', 'userAltitude']);
     const userRadius = cookies.userRadius ?? 1.5;
-    const [updateFrequency, setUpdateFrequency] = useState<number>(5);
+    // The upstream aircraft API now rate-limits free accounts (500 requests / 24h)
+    // and can intermittently throw 500s when polled too aggressively.
+    // To keep usage predictable and reduce errors, the frontend refresh interval is fixed.
+    const UPDATE_FREQUENCY_SECONDS = 15;
     const [nearestDistance, setNearestDistance] = useState<number>(Infinity);
     const [isPaused, setIsPaused] = useState(false);
     const [aboutOpen, setAboutOpen] = useState(false);
@@ -69,7 +72,7 @@ const App: React.FC = () => {
                 <div className="aircraft-list">
                     <AircraftList 
                         onNearestUpdate={setNearestDistance}
-                        frequency={updateFrequency}
+                        frequency={UPDATE_FREQUENCY_SECONDS}
                         isPaused={isPaused}
                         userRadius={userRadius}
                     />
@@ -79,8 +82,9 @@ const App: React.FC = () => {
                 </div>
                 <div className="controls-container">
                     <LocationControls 
-                        onFrequencyChange={setUpdateFrequency}
-                        frequency={updateFrequency}
+                        frequency={UPDATE_FREQUENCY_SECONDS}
+                        // Refresh is fixed; this prop is retained only for legacy type compatibility.
+                        onFrequencyChange={() => {}}
                         isPaused={isPaused}
                         onPauseToggle={handlePauseToggle}
                     />

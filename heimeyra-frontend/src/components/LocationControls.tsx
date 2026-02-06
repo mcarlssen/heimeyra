@@ -2,11 +2,10 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useCookies } from 'react-cookie';
 import api from '../api/api';
 import { useDebounce } from '../hooks/useDebounce';
-import { ToggleButtonGroup, ToggleButton, TextField } from '@mui/material';
+import { ToggleButton, TextField } from '@mui/material';
 import PieTimer from './PieTimer';  // Add this import
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faOne, faFive, faZero } from '../fontawesome';
 
 
 // Create theme outside of component to prevent recreation on each render
@@ -66,8 +65,9 @@ const theme = createTheme({
 });
 
 interface LocationControlsProps {
-    onFrequencyChange: (freq: number) => void;
     frequency: number;
+    // Legacy prop (refresh is now fixed, but keep type-compatible)
+    onFrequencyChange?: (freq: number) => void;
     onCountdownComplete?: () => void;
     isPaused?: boolean;
     onPauseToggle?: () => void;
@@ -81,11 +81,10 @@ const nauticalToStatute = (nauticalMiles: number): number => {
     return nauticalMiles * 1.15078;
 };
 
-const LocationControls: React.FC<LocationControlsProps> = ({ 
-    onFrequencyChange, 
-    frequency, 
-    isPaused, 
-    onPauseToggle 
+const LocationControls: React.FC<LocationControlsProps> = ({
+    frequency,
+    isPaused,
+    onPauseToggle
 }) => {
     const [cookies, setCookie] = useCookies(['userLocation', 'userRadius', 'userAltitude']);
     const prevLocationRef = useRef(null);  // Move ref here, at component level
@@ -217,19 +216,6 @@ const LocationControls: React.FC<LocationControlsProps> = ({
         }
     }, 750);
 
-    const handleFrequencyChange = useCallback(
-        (event: React.MouseEvent<HTMLElement>, newValue: string | null) => {
-            if (newValue !== null) {
-                const freq = parseInt(newValue);
-                if (freq !== frequency) {
-                    console.log('Updating frequency to:', freq);
-                    onFrequencyChange(freq);
-                }
-            }
-        },
-        [frequency, onFrequencyChange]
-    );
-
     return (
         <div className="controls-container">
             <div className="location-inputs">
@@ -304,24 +290,18 @@ const LocationControls: React.FC<LocationControlsProps> = ({
                     <label className="update-frequency-label">Refresh</label>
                     <div className="controls-row">
                         <ThemeProvider theme={theme}>
-                            <ToggleButtonGroup
-                                value={frequency.toString()}
-                                exclusive
-                                onChange={handleFrequencyChange}
-                                aria-label="refresh frequency"
-                                size="small"
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '10px',
+                                    height: '50px'
+                                }}
                             >
-                                <ToggleButton value="1">
-                                    <FontAwesomeIcon icon={faOne} />
-                                </ToggleButton>
-                                <ToggleButton value="5">
-                                    <FontAwesomeIcon icon={faFive} />
-                                </ToggleButton>
-                                <ToggleButton value="10">
-                                    <FontAwesomeIcon icon={faOne} />
-                                    <FontAwesomeIcon icon={faZero} />
-                                </ToggleButton>
-                            </ToggleButtonGroup>
+                                <span style={{ color: '#ddd', fontSize: '14px' }}>
+                                    {frequency}s (fixed)
+                                </span>
+                            </div>
                             
                             <div className="timer-container">
                                 <PieTimer
